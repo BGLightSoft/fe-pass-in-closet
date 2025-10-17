@@ -4,7 +4,8 @@ import { workspaceApi } from "../api/workspace-api";
 import { useWorkspaceStore } from "../store/workspace-store";
 
 export function useWorkspaces() {
-  const { setWorkspaces } = useWorkspaceStore();
+  const { setWorkspaces, initializeWorkspace, isInitialized } =
+    useWorkspaceStore();
 
   const query = useQuery({
     queryKey: ["workspaces"],
@@ -13,9 +14,15 @@ export function useWorkspaces() {
 
   useEffect(() => {
     if (query.data) {
-      setWorkspaces(query.data);
+      if (!isInitialized) {
+        // First time loading workspaces - auto-select default
+        initializeWorkspace(query.data);
+      } else {
+        // Subsequent loads - just update the list, preserve selection
+        setWorkspaces(query.data);
+      }
     }
-  }, [query.data, setWorkspaces]);
+  }, [query.data, setWorkspaces, initializeWorkspace, isInitialized]);
 
   return query;
 }

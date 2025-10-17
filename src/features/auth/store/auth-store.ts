@@ -42,12 +42,15 @@ export const useAuthStore = create<AuthState>()(
           localStorage.removeItem("access_token");
           localStorage.removeItem("refresh_token");
           localStorage.removeItem("workspace_id");
+          localStorage.removeItem("workspace-storage"); // Clear persisted workspace state
           set({
             user: null,
             accessToken: null,
             refreshToken: null,
             isAuthenticated: false,
           });
+          // Navigate to login (will be handled by component)
+          window.location.href = "/login";
         },
 
         updateUser: (user) => {

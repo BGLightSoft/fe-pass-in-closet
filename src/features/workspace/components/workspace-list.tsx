@@ -4,12 +4,14 @@ import { Check, Trash2, Edit } from "lucide-react";
 import { useDeleteWorkspace } from "../hooks/use-delete-workspace";
 import { useWorkspaces } from "../hooks/use-workspaces";
 import { useWorkspaceStore } from "../store/workspace-store";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function WorkspaceList() {
   const { data: workspaces, isLoading } = useWorkspaces();
   const { mutate: deleteWorkspace, isPending: isDeleting } =
     useDeleteWorkspace();
   const { currentWorkspace, setCurrentWorkspace } = useWorkspaceStore();
+  const queryClient = useQueryClient();
 
   if (isLoading) {
     return (
@@ -67,7 +69,16 @@ export function WorkspaceList() {
                   variant={isSelected ? "default" : "outline"}
                   size="sm"
                   className="flex-1"
-                  onClick={() => setCurrentWorkspace(workspace)}
+                  onClick={() => {
+                    setCurrentWorkspace(workspace);
+                    // Invalidate credential-related queries when workspace changes
+                    queryClient.invalidateQueries({
+                      queryKey: ["credential-groups"],
+                    });
+                    queryClient.invalidateQueries({
+                      queryKey: ["credentials"],
+                    });
+                  }}
                   disabled={isSelected}
                 >
                   {isSelected ? "Selected" : "Select"}

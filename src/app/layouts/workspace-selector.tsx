@@ -2,12 +2,14 @@ import { useWorkspaceStore } from "@/features/workspace/store/workspace-store";
 import { useWorkspaces } from "@/features/workspace/hooks/use-workspaces";
 import { ChevronDown, Check } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function WorkspaceSelector() {
   const { currentWorkspace, setCurrentWorkspace } = useWorkspaceStore();
   const { data: workspaces, isLoading } = useWorkspaces();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -51,6 +53,13 @@ export function WorkspaceSelector() {
                 onClick={() => {
                   setCurrentWorkspace(workspace);
                   setIsOpen(false);
+                  // Invalidate credential-related queries when workspace changes
+                  queryClient.invalidateQueries({
+                    queryKey: ["credential-groups"],
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["credentials"],
+                  });
                 }}
                 className="flex w-full items-center justify-between rounded px-3 py-2 text-left text-sm hover:bg-gray-100"
               >
