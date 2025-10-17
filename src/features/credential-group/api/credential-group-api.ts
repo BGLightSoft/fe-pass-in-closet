@@ -10,8 +10,11 @@ import {
 export const credentialGroupApi = {
   getAll: async (): Promise<CredentialGroup[]> => {
     const response = await apiClient.get("/credential-group");
-    const wrappedSchema = createResponseSchema(z.array(credentialGroupSchema));
-    return wrappedSchema.parse(response.data);
+    const wrappedSchema = createResponseSchema(
+      z.object({ items: z.array(credentialGroupSchema) })
+    );
+    const data = wrappedSchema.parse(response.data);
+    return data.items;
   },
 
   create: async (
