@@ -1,0 +1,33 @@
+import { z } from "zod";
+import { createResponseSchema } from "@/shared/api/response-wrapper";
+
+export const workspaceSchema = z.object({
+  id: z.string(),
+  name: z.string().nullable(),
+  isActive: z.boolean(),
+  isDefault: z.boolean().optional(),
+  createdAt: z.string().or(z.date()),
+  updatedAt: z.string().or(z.date()),
+});
+
+// Backend returns { items: [...] } for workspace list
+const workspaceListPayloadSchema = z.object({
+  items: z.array(workspaceSchema),
+});
+
+export const createWorkspaceRequestSchema = z.object({
+  name: z.string().min(1, "Workspace name is required").max(255),
+});
+
+export const updateWorkspaceRequestSchema = z.object({
+  name: z.string().min(1).max(255).optional(),
+  isActive: z.boolean().optional(),
+});
+
+export type Workspace = z.infer<typeof workspaceSchema>;
+export type CreateWorkspaceRequest = z.infer<
+  typeof createWorkspaceRequestSchema
+>;
+export type UpdateWorkspaceRequest = z.infer<
+  typeof updateWorkspaceRequestSchema
+>;
