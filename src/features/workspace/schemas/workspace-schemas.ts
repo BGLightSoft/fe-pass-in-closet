@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { createResponseSchema } from "@/shared/api/response-wrapper";
 
 export const workspaceSchema = z.object({
   id: z.string(),
@@ -8,11 +7,6 @@ export const workspaceSchema = z.object({
   isDefault: z.boolean().optional(),
   createdAt: z.string().or(z.date()),
   updatedAt: z.string().or(z.date()),
-});
-
-// Backend returns { items: [...] } for workspace list
-const workspaceListPayloadSchema = z.object({
-  items: z.array(workspaceSchema),
 });
 
 export const createWorkspaceRequestSchema = z.object({

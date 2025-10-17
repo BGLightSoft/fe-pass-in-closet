@@ -29,7 +29,7 @@ export type CredentialGroup = {
   isActive: boolean;
   createdAt: string | Date;
   updatedAt: string | Date;
-  children?: CredentialGroup[];
+  children?: CredentialGroup[] | undefined;
 };
 
 export type CreateCredentialGroupRequest = z.infer<

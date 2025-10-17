@@ -5,7 +5,7 @@ export interface Workspace {
   id: string;
   name: string | null;
   isActive: boolean;
-  isDefault?: boolean;
+  isDefault?: boolean | undefined;
   createdAt: Date;
   updatedAt: Date;
 }

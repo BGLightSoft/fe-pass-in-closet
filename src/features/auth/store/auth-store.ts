@@ -5,7 +5,7 @@ export interface User {
   id: string;
   email: string;
   isActive: boolean;
-  accountParameters?: Record<string, unknown>;
+  accountParameters?: Record<string, unknown> | undefined;
 }
 
 interface AuthState {
