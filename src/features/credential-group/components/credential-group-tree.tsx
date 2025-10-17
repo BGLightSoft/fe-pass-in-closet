@@ -15,13 +15,11 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronRight,
-  Eye,
   Folder,
   FolderOpen,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import type { CredentialGroup } from "../schemas/credential-group-schemas";
 import { CreateCredentialGroupForm } from "./create-credential-group-form";
 
@@ -29,21 +27,33 @@ interface CredentialGroupNodeProps {
   group: CredentialGroup;
   level?: number;
   onDelete: (id: string) => void;
+  onSelect?: (groupId: string, groupName: string) => void;
+  selectedGroupId?: string | null;
 }
 
 function CredentialGroupNode({
   group,
   level = 0,
   onDelete,
+  onSelect,
+  selectedGroupId,
 }: CredentialGroupNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const hasChildren = group.children && group.children.length > 0;
-  const navigate = useNavigate();
+  const isSelected = selectedGroupId === group.id;
+
+  const handleSelect = () => {
+    if (onSelect) {
+      onSelect(group.id, group.name || "Unnamed Group");
+    }
+  };
 
   return (
     <div className="space-y-1">
       <div
-        className="group flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-blue-50"
+        className={`group flex items-center gap-2 rounded-lg p-2 transition-colors ${
+          isSelected ? "bg-blue-100 shadow-sm" : "hover:bg-blue-50"
+        }`}
         style={{ paddingLeft: `${level * 24 + 8}px` }}
       >
         {hasChildren ? (
@@ -70,22 +80,21 @@ function CredentialGroupNode({
 
         <button
           type="button"
-          className="flex-1 cursor-pointer text-left font-medium text-gray-900 transition-colors hover:text-blue-600"
-          onClick={() => navigate(`/credentials/${group.id}`)}
+          className={`flex-1 cursor-pointer text-left font-medium transition-colors ${
+            isSelected
+              ? "text-blue-700 font-semibold"
+              : "text-gray-900 hover:text-blue-600"
+          }`}
+          onClick={handleSelect}
         >
           {group.name}
         </button>
 
-        <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button
-            size="sm"
-            variant="ghost"
-            className="h-7 gap-1 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
-            onClick={() => navigate(`/credentials/${group.id}`)}
-            title="View credentials"
-          >
-            <Eye size={14} />
-          </Button>
+        <div
+          className={`flex items-center gap-1 transition-opacity ${
+            isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          }`}
+        >
           <CreateCredentialGroupForm
             parentId={group.id}
             parentName={group.name ?? undefined}
@@ -150,6 +159,8 @@ function CredentialGroupNode({
               group={child}
               level={level + 1}
               onDelete={onDelete}
+              onSelect={onSelect}
+              selectedGroupId={selectedGroupId}
             />
           ))}
         </div>
@@ -161,11 +172,15 @@ function CredentialGroupNode({
 interface CredentialGroupTreeProps {
   groups: CredentialGroup[];
   onDelete: (id: string) => void;
+  onSelect?: (groupId: string, groupName: string) => void;
+  selectedGroupId?: string | null;
 }
 
 export function CredentialGroupTree({
   groups,
   onDelete,
+  onSelect,
+  selectedGroupId,
 }: CredentialGroupTreeProps) {
   if (!groups || groups.length === 0) {
     return (
@@ -199,6 +214,8 @@ export function CredentialGroupTree({
             key={group.id}
             group={group}
             onDelete={onDelete}
+            onSelect={onSelect}
+            selectedGroupId={selectedGroupId}
           />
         ))}
       </CardContent>
