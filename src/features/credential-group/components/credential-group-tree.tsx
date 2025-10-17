@@ -1,48 +1,57 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/shared/ui/alert-dialog'
+import { Button } from '@/shared/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
+import {
+  AlertTriangle,
   ChevronDown,
   ChevronRight,
+  Eye,
   Folder,
   FolderOpen,
   Trash2,
-  Plus,
-} from "lucide-react";
-import { useState } from "react";
-import type { CredentialGroup } from "../schemas/credential-group-schemas";
-import { useNavigate } from "react-router-dom";
+} from 'lucide-react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import type { CredentialGroup } from '../schemas/credential-group-schemas'
+import { CreateCredentialGroupForm } from './create-credential-group-form'
 
 interface CredentialGroupNodeProps {
-  group: CredentialGroup;
-  level?: number;
-  onDelete: (id: string) => void;
+  group: CredentialGroup
+  level?: number
+  onDelete: (id: string) => void
 }
 
-function CredentialGroupNode({
-  group,
-  level = 0,
-  onDelete,
-}: CredentialGroupNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const hasChildren = group.children && group.children.length > 0;
-  const navigate = useNavigate();
+function CredentialGroupNode({ group, level = 0, onDelete }: CredentialGroupNodeProps) {
+  const [isExpanded, setIsExpanded] = useState(true)
+  const hasChildren = group.children && group.children.length > 0
+  const navigate = useNavigate()
 
   return (
     <div className="space-y-1">
       <div
-        className="group flex items-center gap-2 rounded-lg p-2 hover:bg-gray-50"
+        className="group flex items-center gap-2 rounded-lg p-2 transition-colors hover:bg-blue-50"
         style={{ paddingLeft: `${level * 24 + 8}px` }}
       >
         {hasChildren ? (
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex-shrink-0 rounded p-1 hover:bg-gray-200"
+            className="flex-shrink-0 rounded p-1 transition-colors hover:bg-blue-100"
           >
             {isExpanded ? (
-              <ChevronDown size={16} />
+              <ChevronDown size={16} className="text-gray-600" />
             ) : (
-              <ChevronRight size={16} />
+              <ChevronRight size={16} className="text-gray-600" />
             )}
           </button>
         ) : (
@@ -55,35 +64,69 @@ function CredentialGroupNode({
           <Folder size={18} className="flex-shrink-0 text-gray-500" />
         )}
 
-        <span
-          className="flex-1 cursor-pointer font-medium text-gray-900 hover:text-blue-600"
+        <button
+          type="button"
+          className="flex-1 cursor-pointer text-left font-medium text-gray-900 transition-colors hover:text-blue-600"
           onClick={() => navigate(`/credentials/${group.id}`)}
         >
           {group.name}
-        </span>
+        </button>
 
         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
           <Button
             size="sm"
-            variant="outline"
-            onClick={() => {
-              // TODO: Create child group
-              alert("Create sub-group functionality coming soon!");
-            }}
+            variant="ghost"
+            className="h-7 gap-1 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
+            onClick={() => navigate(`/credentials/${group.id}`)}
+            title="View credentials"
           >
-            <Plus size={14} />
+            <Eye size={14} />
           </Button>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => {
-              if (confirm(`Delete "${group.name}"?`)) {
-                onDelete(group.id);
-              }
-            }}
-          >
-            <Trash2 size={14} />
-          </Button>
+          <CreateCredentialGroupForm parentId={group.id} parentName={group.name || undefined} />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-red-600 hover:bg-red-100 hover:text-red-700"
+                title="Delete group"
+              >
+                <Trash2 size={14} />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2">
+                  <AlertTriangle className="text-red-600" size={24} />
+                  Delete Credential Group?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-base">
+                  Are you sure you want to delete{' '}
+                  <span className="font-semibold text-gray-900">"{group.name}"</span>?
+                  <div className="mt-3 rounded-lg bg-red-50 p-3">
+                    <p className="font-medium text-red-900">⚠️ This will permanently delete:</p>
+                    <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-800">
+                      <li>All sub-groups within this group</li>
+                      <li>All credentials in this group and sub-groups</li>
+                      <li>All associated credential data</li>
+                    </ul>
+                    <p className="mt-2 text-sm font-semibold text-red-900">
+                      This action cannot be undone!
+                    </p>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(group.id)}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Delete Group
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -100,44 +143,44 @@ function CredentialGroupNode({
         </div>
       )}
     </div>
-  );
+  )
 }
 
 interface CredentialGroupTreeProps {
-  groups: CredentialGroup[];
-  onDelete: (id: string) => void;
+  groups: CredentialGroup[]
+  onDelete: (id: string) => void
 }
 
-export function CredentialGroupTree({
-  groups,
-  onDelete,
-}: CredentialGroupTreeProps) {
+export function CredentialGroupTree({ groups, onDelete }: CredentialGroupTreeProps) {
   if (!groups || groups.length === 0) {
     return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <p className="text-gray-500">
-            No credential groups found. Create your first group!
+      <Card className="border-dashed">
+        <CardContent className="flex flex-col items-center justify-center p-12">
+          <div className="rounded-full bg-gray-100 p-4">
+            <Folder size={48} className="text-gray-400" />
+          </div>
+          <p className="mt-4 text-lg font-medium text-gray-900">No credential groups yet</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Create your first group to organize your credentials
           </p>
         </CardContent>
       </Card>
-    );
+    )
   }
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Credential Groups Tree</CardTitle>
+      <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardTitle className="flex items-center gap-2">
+          <FolderOpen className="text-blue-600" size={20} />
+          Your Credential Groups
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1">
+      <CardContent className="space-y-1 p-4">
         {groups.map((group) => (
-          <CredentialGroupNode
-            key={group.id}
-            group={group}
-            onDelete={onDelete}
-          />
+          <CredentialGroupNode key={group.id} group={group} onDelete={onDelete} />
         ))}
       </CardContent>
     </Card>
-  );
+  )
 }

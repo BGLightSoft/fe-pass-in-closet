@@ -1,24 +1,25 @@
 import { toast } from '@/shared/ui/use-toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { credentialGroupApi } from '../api/credential-group-api'
+import type { CreateCredentialGroupRequest } from '../schemas/credential-group-schemas'
 
-export function useDeleteCredentialGroup() {
+export function useCreateCredentialGroup() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => credentialGroupApi.delete(id),
-    onSuccess: () => {
+    mutationFn: (data: CreateCredentialGroupRequest) => credentialGroupApi.create(data),
+    onSuccess: (newGroup) => {
       toast({
         variant: 'success',
-        title: '🗑️ Group deleted',
-        description: 'The group and all its contents have been removed successfully.',
+        title: '✨ Group created!',
+        description: `${newGroup.name} has been created successfully.`,
       })
       queryClient.invalidateQueries({ queryKey: ['credential-groups'] })
     },
     onError: (error) => {
       toast({
         variant: 'error',
-        title: '❌ Failed to delete group',
+        title: '❌ Failed to create group',
         description: error.message || 'Please try again later.',
       })
     },
