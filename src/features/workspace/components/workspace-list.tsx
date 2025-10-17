@@ -1,6 +1,17 @@
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Check, Trash2, Edit } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
+import { Check, Trash2, Edit, AlertTriangle } from "lucide-react";
 import { useDeleteWorkspace } from "../hooks/use-delete-workspace";
 import { useWorkspaces } from "../hooks/use-workspaces";
 import { useWorkspaceStore } from "../store/workspace-store";
@@ -93,22 +104,46 @@ export function WorkspaceList() {
                 >
                   <Edit size={16} />
                 </Button>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  disabled={isDeleting}
-                  onClick={() => {
-                    if (
-                      confirm(
-                        `Are you sure you want to delete "${workspace.name}"?`
-                      )
-                    ) {
-                      deleteWorkspace(workspace.id);
-                    }
-                  }}
-                >
-                  <Trash2 size={16} />
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="flex items-center gap-2">
+                        <AlertTriangle className="text-red-600" size={24} />
+                        Delete Workspace?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-base">
+                        Are you sure you want to delete{" "}
+                        <span className="font-semibold text-gray-900">
+                          "{workspace.name}"
+                        </span>
+                        ? This action will:
+                        <ul className="mt-2 list-inside list-disc space-y-1 text-sm">
+                          <li>Permanently delete all credential groups</li>
+                          <li>Remove all credentials and their data</li>
+                          <li>Cannot be undone</li>
+                        </ul>
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => deleteWorkspace(workspace.id)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Delete Workspace
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </CardContent>
           </Card>
