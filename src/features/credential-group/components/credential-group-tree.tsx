@@ -46,7 +46,7 @@ function CredentialGroupNode({
   selectedGroupId,
   rootTypeName,
 }: CredentialGroupNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const hasChildren = group.children && group.children.length > 0;
   const isSelected = selectedGroupId === group.id;
 
