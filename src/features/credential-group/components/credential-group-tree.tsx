@@ -80,14 +80,33 @@ function CredentialGroupNode({
 
         <button
           type="button"
-          className={`flex-1 cursor-pointer text-left font-medium transition-colors ${
+          className={`flex-1 cursor-pointer text-left transition-colors ${
             isSelected
               ? "text-blue-700 font-semibold"
               : "text-gray-900 hover:text-blue-600"
           }`}
           onClick={handleSelect}
         >
-          {group.name}
+          <div className="flex items-center gap-2">
+            <span className="font-medium">{group.name}</span>
+            {group.credentialGroupId === null &&
+              group.credentialGroupTypeName && (
+                <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                  {group.credentialGroupTypeName}
+                </span>
+              )}
+          </div>
+          <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+            <span>
+              {group.credentialCount}{" "}
+              {group.credentialCount === 1 ? "credential" : "credentials"}
+            </span>
+            {group.totalCredentialCount > group.credentialCount && (
+              <span className="text-gray-400">
+                • {group.totalCredentialCount} total
+              </span>
+            )}
+          </div>
         </button>
 
         <div

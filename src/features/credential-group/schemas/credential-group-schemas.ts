@@ -4,12 +4,15 @@ export const credentialGroupSchema: z.ZodType<CredentialGroup> = z.lazy(() =>
   z.object({
     id: z.string(),
     credentialGroupTypeId: z.string().nullable(),
+    credentialGroupTypeName: z.string().nullable().optional(),
     credentialGroupId: z.string().nullable(),
     workspaceId: z.string(),
     name: z.string().nullable(),
     isActive: z.boolean(),
     createdAt: z.string().or(z.date()),
     updatedAt: z.string().or(z.date()),
+    credentialCount: z.number(),
+    totalCredentialCount: z.number(),
     children: z.array(credentialGroupSchema).optional(),
   })
 );
@@ -23,12 +26,15 @@ export const createCredentialGroupRequestSchema = z.object({
 export type CredentialGroup = {
   id: string;
   credentialGroupTypeId: string | null;
+  credentialGroupTypeName?: string | null;
   credentialGroupId: string | null;
   workspaceId: string;
   name: string | null;
   isActive: boolean;
   createdAt: string | Date;
   updatedAt: string | Date;
+  credentialCount: number;
+  totalCredentialCount: number;
   children?: CredentialGroup[] | undefined;
 };
 
