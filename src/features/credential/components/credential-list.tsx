@@ -96,25 +96,27 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
         return (
           <Card key={credential.id} className="overflow-hidden">
             <CardHeader
-              className="cursor-pointer hover:bg-gray-50 transition-colors"
+              className="cursor-pointer hover:bg-gray-50 transition-colors py-2 px-3"
               onClick={() => toggleCredentialExpansion(credential.id)}
             >
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <CardTitle className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-1.5">
                   {isExpanded ? (
-                    <ChevronDown size={20} className="text-blue-600" />
+                    <ChevronDown size={14} className="text-blue-600" />
                   ) : (
-                    <ChevronRight size={20} className="text-blue-600" />
+                    <ChevronRight size={14} className="text-blue-600" />
                   )}
-                  <Key size={20} className="text-blue-600" />
-                  <span>{credential.name}</span>
+                  <Key size={14} className="text-blue-600" />
+                  <span className="text-xs font-semibold">
+                    {credential.name}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-gray-500">
                     {credential.parameters
                       ? Object.keys(credential.parameters).length
                       : 0}{" "}
-                    parameters
+                    params
                   </span>
                   <EditCredentialForm credential={credential} />
                   <AlertDialog>
@@ -167,9 +169,9 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
             </CardHeader>
 
             {isExpanded && (
-              <CardContent className="border-t bg-gray-50">
+              <CardContent className="border-t border-gray-300 bg-gray-50 py-2 px-3">
                 {credential.parameters && (
-                  <div className="space-y-3">
+                  <div className="space-y-1.5">
                     {Object.entries(credential.parameters)
                       .filter(
                         ([key]) =>
@@ -193,13 +195,13 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                         return (
                           <div
                             key={key}
-                            className="flex items-center justify-between rounded-lg border bg-white p-3"
+                            className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-1.5"
                           >
                             <div className="flex-1">
                               <div className="text-xs font-medium uppercase text-gray-500">
                                 {formattedLabel}
                               </div>
-                              <div className="mt-1 font-mono text-sm">
+                              <div className="mt-0.5 font-mono text-xs">
                                 {displayValue}
                               </div>
                             </div>
@@ -237,7 +239,7 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                         );
                       })}
 
-                    <div className="mt-4 flex gap-4 text-xs text-gray-500">
+                    <div className="mt-2 flex gap-4 text-xs text-gray-500 border-t border-gray-200 pt-1.5">
                       <div>
                         Created:{" "}
                         {credential.parameters.createdAt

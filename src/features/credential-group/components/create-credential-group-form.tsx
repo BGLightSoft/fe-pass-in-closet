@@ -98,39 +98,47 @@ export function CreateCredentialGroupForm({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <TypeIcon className={typeColor} size={24} />
-            {isSubGroup ? "Create Sub-Group" : "Create Credential Group"}
-          </DialogTitle>
-          <DialogDescription className="text-base">
-            {isSubGroup ? (
-              <>
-                Create a new sub-group under{" "}
-                <span className="font-semibold text-gray-900">
-                  {parentName}
-                </span>
-                {parentTypeName && (
-                  <span className={`ml-1 ${typeColor}`}>
-                    ({parentTypeName} type)
-                  </span>
+      <DialogContent className="sm:max-w-[550px]">
+        <DialogHeader className="border-b border-gray-200 pb-4">
+          <div className="flex items-center gap-3">
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-purple-100`}
+            >
+              <TypeIcon className={typeColor} size={24} />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold text-gray-900">
+                {isSubGroup ? "Create Sub-Group" : "Create New Group"}
+              </DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                {isSubGroup ? (
+                  <>
+                    Under{" "}
+                    <span className="font-semibold text-gray-900">
+                      {parentName}
+                    </span>
+                    {parentTypeName && (
+                      <span className={`ml-1 ${typeColor}`}>
+                        ({parentTypeName})
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  "Organize your credentials in structured groups"
                 )}
-              </>
-            ) : (
-              "Organize your credentials by creating a new group"
-            )}
-          </DialogDescription>
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-base">
+            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
               Group Name <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
               placeholder="e.g., Production Servers, Email Accounts"
-              className="h-11 text-base"
+              className="h-11"
               autoFocus
               {...register("name")}
             />
@@ -144,7 +152,10 @@ export function CreateCredentialGroupForm({
           {/* Only show type selector for root groups, sub-groups inherit parent type */}
           {!isSubGroup && (
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-base">
+              <Label
+                htmlFor="type"
+                className="text-sm font-medium text-gray-700"
+              >
                 Group Type <span className="text-red-500">*</span>
               </Label>
               <Controller
@@ -152,14 +163,16 @@ export function CreateCredentialGroupForm({
                 control={control}
                 render={({ field }) => (
                   <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="h-11 text-base">
+                    <SelectTrigger className="h-11">
                       <SelectValue placeholder="Select a group type" />
                     </SelectTrigger>
                     <SelectContent>
                       {isLoadingTypes ? (
                         <div className="flex items-center justify-center p-4">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="ml-2 text-sm">Loading types...</span>
+                          <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                          <span className="ml-2 text-sm text-gray-600">
+                            Loading types...
+                          </span>
                         </div>
                       ) : groupTypes && groupTypes.length > 0 ? (
                         groupTypes
@@ -195,8 +208,7 @@ export function CreateCredentialGroupForm({
                 </p>
               )}
               <p className="text-xs text-gray-500">
-                The type determines what fields are available for credentials in
-                this group
+                Determines the fields available for credentials
               </p>
             </div>
           )}
@@ -210,7 +222,7 @@ export function CreateCredentialGroupForm({
             />
           )}
 
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2 pt-4 border-t border-gray-200">
             <Button
               type="button"
               variant="outline"
@@ -219,10 +231,15 @@ export function CreateCredentialGroupForm({
                 reset();
               }}
               disabled={isPending}
+              className="h-10"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending} className="gap-2">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="h-10 gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
               {isPending ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

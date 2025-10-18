@@ -156,7 +156,7 @@ export default function CredentialGroupsPage() {
               <Layers size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">Credential Groups</h1>
+              <h1 className="text-2xl font-bold">Credentials</h1>
               <p className="text-sm text-blue-100">
                 Organize your credentials in a structured hierarchy
               </p>

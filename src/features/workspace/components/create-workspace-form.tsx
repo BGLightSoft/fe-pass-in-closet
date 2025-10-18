@@ -12,7 +12,7 @@ import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, FolderPlus } from "lucide-react";
 import { useState } from "react";
 import { useCreateWorkspace } from "../hooks/use-create-workspace";
 import {
@@ -69,26 +69,31 @@ export function CreateWorkspaceForm() {
           <span className="text-xs font-medium">New Workspace</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="text-blue-600" size={24} />
-            Create New Workspace
-          </DialogTitle>
-          <DialogDescription className="text-base">
-            Workspaces help you organize your credentials by project, team, or
-            any way you like.
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[550px]">
+        <DialogHeader className="border-b border-gray-200 pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-100 to-purple-100">
+              <FolderPlus size={24} className="text-blue-600" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold text-gray-900">
+                Create New Workspace
+              </DialogTitle>
+              <DialogDescription className="text-sm text-gray-600">
+                Organize your credentials by project, team, or client
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-base">
+            <Label htmlFor="name" className="text-sm font-medium text-gray-700">
               Workspace Name <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
               placeholder="e.g., Personal, Work, Client Projects"
-              className="h-11 text-base"
+              className="h-11"
               autoFocus
               {...register("name")}
             />
@@ -98,12 +103,11 @@ export function CreateWorkspaceForm() {
               </p>
             )}
             <p className="text-xs text-gray-500">
-              Choose a descriptive name that helps you identify this workspace
-              easily.
+              Choose a descriptive name for easy identification
             </p>
           </div>
 
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2 pt-4 border-t border-gray-200">
             <Button
               type="button"
               variant="outline"
@@ -112,10 +116,15 @@ export function CreateWorkspaceForm() {
                 reset();
               }}
               disabled={isPending}
+              className="h-10"
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isPending} className="gap-2">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="h-10 gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
               {isPending ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

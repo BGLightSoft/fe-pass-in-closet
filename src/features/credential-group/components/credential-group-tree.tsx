@@ -247,7 +247,7 @@ export function CredentialGroupTree({
       <CardHeader className="border-b border-gray-300 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardTitle className="flex items-center gap-2">
           <FolderOpen className="text-blue-600" size={18} />
-          Your Credential Groups
+          Credential Groups
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-1 p-3">

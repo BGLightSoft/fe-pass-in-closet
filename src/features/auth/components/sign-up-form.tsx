@@ -12,37 +12,49 @@ import { Label } from "@/shared/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { useLogin } from "../hooks/use-login";
-import { type LoginRequest, loginRequestSchema } from "../schemas/auth-schemas";
-import { Eye, EyeOff, Lock, Mail, ArrowRight } from "lucide-react";
+import { useSignUp } from "../hooks/use-sign-up";
+import {
+  type SignUpRequest,
+  signUpRequestSchema,
+} from "../schemas/auth-schemas";
+import {
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  ArrowRight,
+  UserPlus,
+  User,
+} from "lucide-react";
 
-export function LoginForm() {
-  const { mutate: login, isPending, error } = useLogin();
+export function SignUpForm() {
+  const { mutate: signUp, isPending, error } = useSignUp();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginRequest>({
-    resolver: zodResolver(loginRequestSchema),
+  } = useForm<SignUpRequest>({
+    resolver: zodResolver(signUpRequestSchema),
   });
 
-  const onSubmit = (data: LoginRequest) => {
-    login(data);
+  const onSubmit = (data: SignUpRequest) => {
+    signUp(data);
   };
 
   return (
     <Card className="border-gray-300 shadow-xl">
       <CardHeader className="space-y-2 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 pb-6">
         <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-purple-600">
-          <Lock size={28} className="text-white" />
+          <UserPlus size={28} className="text-white" />
         </div>
         <CardTitle className="text-center text-2xl font-bold text-gray-900">
-          Welcome Back
+          Create Account
         </CardTitle>
         <CardDescription className="text-center text-sm text-gray-600">
-          Sign in to access your secure credential vault
+          Get started with your secure credential vault
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
@@ -72,6 +84,62 @@ export function LoginForm() {
                 {errors.email.message}
               </p>
             )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="firstName"
+                className="text-sm font-medium text-gray-700"
+              >
+                First Name
+              </Label>
+              <div className="relative">
+                <User
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <Input
+                  id="firstName"
+                  type="text"
+                  placeholder="John"
+                  {...register("firstName")}
+                  className="pl-10 h-11"
+                />
+              </div>
+              {errors.firstName && (
+                <p className="text-sm text-red-600 flex items-center gap-1">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label
+                htmlFor="lastName"
+                className="text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </Label>
+              <div className="relative">
+                <User
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                />
+                <Input
+                  id="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  {...register("lastName")}
+                  className="pl-10 h-11"
+                />
+              </div>
+              {errors.lastName && (
+                <p className="text-sm text-red-600 flex items-center gap-1">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -106,11 +174,48 @@ export function LoginForm() {
                 {errors.password.message}
               </p>
             )}
+            <p className="text-xs text-gray-500">
+              Password must be at least 8 characters
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label
+              htmlFor="confirmPassword"
+              className="text-sm font-medium text-gray-700"
+            >
+              Confirm Password
+            </Label>
+            <div className="relative">
+              <Lock
+                size={18}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              />
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="••••••••••"
+                {...register("confirmPassword")}
+                className="pl-10 pr-10 h-11"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-600 flex items-center gap-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {error && (
             <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {error.message || "Login failed. Please check your credentials."}
+              {error.message || "Sign up failed. Please try again."}
             </div>
           )}
 
@@ -120,10 +225,10 @@ export function LoginForm() {
             disabled={isPending}
           >
             {isPending ? (
-              <span>Signing in...</span>
+              <span>Creating account...</span>
             ) : (
               <span className="flex items-center justify-center gap-2">
-                Sign In
+                Create Account
                 <ArrowRight size={18} />
               </span>
             )}
@@ -135,17 +240,17 @@ export function LoginForm() {
             </div>
             <div className="relative flex justify-center text-xs">
               <span className="bg-white px-2 text-gray-500">
-                Don't have an account?
+                Already have an account?
               </span>
             </div>
           </div>
 
           <div className="text-center">
             <Link
-              to="/sign-up"
+              to="/login"
               className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
-              Create an account
+              Sign in instead
               <ArrowRight size={14} />
             </Link>
           </div>

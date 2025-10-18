@@ -15,7 +15,9 @@ export const authApi = {
   },
 
   signUp: async (data: SignUpRequest): Promise<SignUpResponse> => {
-    const response = await apiClient.post("/auth/sign-up", data);
+    // Remove confirmPassword before sending to backend
+    const { confirmPassword, ...signUpData } = data;
+    const response = await apiClient.post("/auth/sign-up", signUpData);
     return signUpSchema.parse(response.data);
   },
 

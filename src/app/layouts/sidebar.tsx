@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Workspaces", href: "/workspaces", icon: FolderTree },
-  { name: "Credential Groups", href: "/credential-groups", icon: Key },
+  { name: "Credentials", href: "/credential-groups", icon: Key },
 ];
 
 export function Sidebar() {

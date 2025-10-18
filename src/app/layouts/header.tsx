@@ -32,7 +32,7 @@ export function Header() {
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-6">
       <div className="flex items-center gap-4">
-        <h2 className="text-lg font-semibold">Selected Workspace</h2>
+        <h2 className="text-lg font-semibold">Workspace</h2>
         <WorkspaceSelector />
       </div>
       <div className="flex items-center gap-4">
