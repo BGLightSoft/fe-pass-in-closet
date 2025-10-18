@@ -176,9 +176,9 @@ function SortableCredentialItem({
         </CardHeader>
 
         {isExpanded && (
-          <CardContent className="border-t border-gray-300 bg-gray-50 py-2 px-3">
+          <CardContent className="border-t border-gray-300 bg-gradient-to-br from-gray-50 to-blue-50/20 py-3 px-3">
             {credential.parameters && (
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 {Object.entries(credential.parameters)
                   .filter(
                     ([key]) =>
@@ -199,17 +199,17 @@ function SortableCredentialItem({
                     return (
                       <div
                         key={key}
-                        className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-1.5"
+                        className="group flex items-center justify-between rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-blue-300 hover:shadow-sm"
                       >
-                        <div className="flex-1">
-                          <div className="text-xs font-medium uppercase text-gray-500">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-semibold text-gray-700 mb-1">
                             {formattedLabel}
                           </div>
-                          <div className="mt-0.5 font-mono text-xs">
+                          <div className="font-mono text-sm text-gray-900 break-all">
                             {displayValue}
                           </div>
                         </div>
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 ml-3 flex-shrink-0">
                           {isPasswordField && (
                             <Button
                               size="sm"
