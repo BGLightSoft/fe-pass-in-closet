@@ -3,6 +3,7 @@ import { createResponseSchema } from "@/shared/api/response-wrapper";
 import { z } from "zod";
 import {
   type CreateCredentialRequest,
+  type UpdateCredentialRequest,
   type Credential,
   type CredentialParameterList,
   credentialSchema,
@@ -36,6 +37,15 @@ export const credentialApi = {
     console.log("🌐 API Request - POST /credential:", data);
     const response = await apiClient.post("/credential", data);
     console.log("🌐 API Response:", response.data);
+    const wrappedSchema = createResponseSchema(credentialSchema);
+    return wrappedSchema.parse(response.data);
+  },
+
+  update: async (
+    id: string,
+    data: UpdateCredentialRequest
+  ): Promise<Credential> => {
+    const response = await apiClient.patch(`/credential/${id}`, data);
     const wrappedSchema = createResponseSchema(credentialSchema);
     return wrappedSchema.parse(response.data);
   },

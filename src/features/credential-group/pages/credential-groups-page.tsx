@@ -96,9 +96,9 @@ export default function CredentialGroupsPage() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid gap-6 lg:grid-cols-10">
         {/* Sol Taraf - Credential Groups Tree */}
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-3">
           <CredentialGroupTree
             groups={groups || []}
             onDelete={deleteGroup}

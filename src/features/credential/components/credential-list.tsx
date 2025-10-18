@@ -25,6 +25,8 @@ import {
   AlertDialogTrigger,
 } from "@/shared/ui/alert-dialog";
 import { toTitleCase } from "@/shared/lib/format-utils";
+import { EditCredentialForm } from "./edit-credential-form";
+import { EditCredentialParameterDialog } from "./edit-credential-parameter-dialog";
 
 interface CredentialListProps {
   credentials: Credential[];
@@ -114,6 +116,7 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                       : 0}{" "}
                     parameters
                   </span>
+                  <EditCredentialForm credential={credential} />
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -196,6 +199,12 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                               </div>
                             </div>
                             <div className="flex gap-1">
+                              <EditCredentialParameterDialog
+                                credential={credential}
+                                parameterKey={key}
+                                parameterValue={String(value)}
+                                parameterLabel={formattedLabel}
+                              />
                               {isPasswordField && (
                                 <Button
                                   size="sm"

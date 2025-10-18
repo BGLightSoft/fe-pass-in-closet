@@ -23,6 +23,11 @@ export const createCredentialGroupRequestSchema = z.object({
   name: z.string().min(1, "Group name is required").max(255),
 });
 
+export const updateCredentialGroupRequestSchema = z.object({
+  name: z.string().min(1, "Group name is required").max(255).optional(),
+  isActive: z.boolean().optional(),
+});
+
 export type CredentialGroup = {
   id: string;
   credentialGroupTypeId: string | null;
@@ -40,4 +45,8 @@ export type CredentialGroup = {
 
 export type CreateCredentialGroupRequest = z.infer<
   typeof createCredentialGroupRequestSchema
+>;
+
+export type UpdateCredentialGroupRequest = z.infer<
+  typeof updateCredentialGroupRequestSchema
 >;

@@ -16,6 +16,12 @@ export const createCredentialRequestSchema = z.object({
   parameters: z.record(z.string()),
 });
 
+export const updateCredentialRequestSchema = z.object({
+  name: z.string().min(1, "Credential name is required").max(255).optional(),
+  isActive: z.boolean().optional(),
+  parameters: z.record(z.string()).optional(),
+});
+
 export const credentialParameterListSchema = z.object({
   id: z.string(),
   credentialGroupTypeId: z.string().nullable(),
@@ -29,6 +35,9 @@ export const credentialParameterListSchema = z.object({
 export type Credential = z.infer<typeof credentialSchema>;
 export type CreateCredentialRequest = z.infer<
   typeof createCredentialRequestSchema
+>;
+export type UpdateCredentialRequest = z.infer<
+  typeof updateCredentialRequestSchema
 >;
 export type CredentialParameterList = z.infer<
   typeof credentialParameterListSchema
