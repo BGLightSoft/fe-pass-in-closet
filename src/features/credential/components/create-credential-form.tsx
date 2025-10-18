@@ -10,212 +10,171 @@ import {
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { createCredentialRequestSchema } from "../schemas/credential-schemas";
 import { useCreateCredential } from "../hooks/use-create-credential";
-
-const createCredentialFormSchema = z.object({
-  name: z.string().min(1, "Credential name is required").max(255),
-});
-
-type CreateCredentialFormValues = z.infer<typeof createCredentialFormSchema>;
+import { useCredentialParameterList } from "../hooks/use-credential-parameter-list";
+import { toTitleCase } from "@/shared/lib/format-utils";
 
 interface CreateCredentialFormProps {
-  groupId: string;
+  credentialGroupId: string;
+  credentialGroupTypeId: string;
+  credentialGroupName?: string;
 }
 
-export function CreateCredentialForm({ groupId }: CreateCredentialFormProps) {
+export function CreateCredentialForm({
+  credentialGroupId,
+  credentialGroupTypeId,
+  credentialGroupName,
+}: CreateCredentialFormProps) {
   const [open, setOpen] = useState(false);
-  const [parameters, setParameters] = useState<
-    Array<{ key: string; value: string }>
-  >([{ key: "", value: "" }]);
-  const { mutate: createCredential, isPending } = useCreateCredential();
+  const createCredential = useCreateCredential();
+
+  const { data: parameterList, isLoading: isLoadingParameters } =
+    useCredentialParameterList(credentialGroupTypeId);
+
+  // Dynamic form schema based on parameter list
+  const formSchema = z.object({
+    name: z.string().min(1, "Credential name is required").max(255),
+    ...Object.fromEntries(
+      (parameterList || []).map((param) => [
+        param.name!,
+        z.string().min(1, `${param.name} is required`),
+      ])
+    ),
+  });
+
+  type FormData = z.infer<typeof formSchema>;
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<CreateCredentialFormValues>({
-    resolver: zodResolver(createCredentialFormSchema),
+  } = useForm<FormData>({
+    resolver: zodResolver(formSchema),
   });
 
-  const addParameter = () => {
-    setParameters([...parameters, { key: "", value: "" }]);
-  };
+  const onSubmit = (data: FormData) => {
+    const { name, ...parameters } = data;
 
-  const removeParameter = (index: number) => {
-    if (parameters.length > 1) {
-      setParameters(parameters.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateParameter = (
-    index: number,
-    field: "key" | "value",
-    value: string
-  ) => {
-    const newParameters = [...parameters];
-    newParameters[index][field] = value;
-    setParameters(newParameters);
-  };
-
-  const onSubmit = (data: CreateCredentialFormValues) => {
-    console.log("🔍 Form Submit Debug:", {
-      formData: data,
+    const requestData = {
+      credentialGroupId,
+      name,
       parameters,
-      groupId,
-    });
+    };
 
-    // Manual validation for parameters
-    const validParameters = parameters.filter(
-      (param) => param.key.trim() && param.value.trim()
-    );
-
-    if (validParameters.length === 0) {
-      console.error("❌ No valid parameters provided");
-      return;
-    }
-
-    const parametersObject = validParameters.reduce((acc, param) => {
-      acc[param.key] = param.value;
-      return acc;
-    }, {} as Record<string, string>);
-
-    console.log("🔍 Final Payload:", {
-      credentialGroupId: groupId,
-      name: data.name,
-      parameters: parametersObject,
-    });
-
-    createCredential(
-      {
-        credentialGroupId: groupId,
-        name: data.name,
-        parameters: parametersObject,
+    createCredential.mutate(requestData, {
+      onSuccess: () => {
+        setOpen(false);
+        reset();
       },
-      {
-        onSuccess: () => {
-          console.log("✅ Credential created successfully");
-          setOpen(false);
-          reset();
-          setParameters([{ key: "", value: "" }]);
-        },
-        onError: (error) => {
-          console.error("❌ Credential creation failed:", error);
-        },
-      }
-    );
+    });
+  };
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+    if (!newOpen) {
+      reset();
+    }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="gap-2">
+        <Button size="sm" className="gap-1">
           <Plus size={16} />
-          Create Credential
+          New Credential
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create New Credential</DialogTitle>
           <DialogDescription>
-            Add a new credential with custom parameters to this group.
+            Add a new credential to{" "}
+            <span className="font-semibold text-gray-900">
+              {credentialGroupName || "this group"}
+            </span>
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Credential Name</Label>
-            <Input
-              id="name"
-              placeholder="e.g. Production Database, Gmail Account"
-              {...register("name")}
-              className={errors.name ? "border-red-500" : ""}
-            />
-            {errors.name && (
-              <p className="text-sm text-red-600">{errors.name.message}</p>
-            )}
+
+        {isLoadingParameters ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="animate-spin text-blue-600" size={32} />
           </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>Parameters</Label>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={addParameter}
-                className="gap-1"
-              >
-                <Plus size={14} />
-                Add Parameter
-              </Button>
-            </div>
-            <p className="text-sm text-gray-600">
-              Add custom key-value pairs for your credential (e.g., username,
-              password, host, port).
-            </p>
-
+        ) : (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Credential Name */}
             <div className="space-y-2">
-              {parameters.map((param, index) => (
-                <div key={index} className="flex gap-2">
+              <Label htmlFor="name">
+                Credential Name <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="name"
+                placeholder="e.g., Production Database"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-sm text-red-600">{errors.name.message}</p>
+              )}
+            </div>
+
+            {/* Dynamic Parameter Inputs */}
+            {parameterList?.map((param) => {
+              const formattedLabel = toTitleCase(param.name!);
+              return (
+                <div key={param.id} className="space-y-2">
+                  <Label htmlFor={param.name!}>
+                    {formattedLabel} <span className="text-red-500">*</span>
+                  </Label>
                   <Input
-                    placeholder="Key (e.g., username)"
-                    value={param.key}
-                    onChange={(e) =>
-                      updateParameter(index, "key", e.target.value)
-                    }
-                    className="flex-1"
-                  />
-                  <Input
-                    placeholder="Value"
-                    value={param.value}
-                    onChange={(e) =>
-                      updateParameter(index, "value", e.target.value)
-                    }
-                    className="flex-1"
+                    id={param.name!}
                     type={
-                      param.key.toLowerCase().includes("password")
+                      param.name?.toLowerCase().includes("password")
                         ? "password"
                         : "text"
                     }
+                    placeholder={
+                      (param.data as { placeholder?: string })?.placeholder ||
+                      `Enter ${formattedLabel.toLowerCase()}`
+                    }
+                    {...register(param.name! as keyof FormData)}
                   />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => removeParameter(index)}
-                    disabled={parameters.length === 1}
-                    className="flex-shrink-0 text-red-600 hover:bg-red-100 hover:text-red-700"
-                  >
-                    <Trash2 size={16} />
-                  </Button>
+                  {errors[param.name! as keyof FormData] && (
+                    <p className="text-sm text-red-600">
+                      {errors[param.name! as keyof FormData]?.message}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
+              );
+            })}
 
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                setOpen(false);
-                reset();
-                setParameters([{ key: "", value: "" }]);
-              }}
-              disabled={isPending}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? "Creating..." : "Create Credential"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => handleOpenChange(false)}
+                disabled={createCredential.isPending}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={createCredential.isPending}>
+                {createCredential.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 animate-spin" size={16} />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Credential"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );

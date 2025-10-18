@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/ui/alert-dialog";
+import { toTitleCase } from "@/shared/lib/format-utils";
 
 interface CredentialListProps {
   credentials: Credential[];
@@ -179,6 +180,7 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                           isPasswordField && !isPasswordVisible
                             ? "••••••••••"
                             : String(value);
+                        const formattedLabel = toTitleCase(key);
 
                         return (
                           <div
@@ -187,7 +189,7 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                           >
                             <div className="flex-1">
                               <div className="text-xs font-medium uppercase text-gray-500">
-                                {key}
+                                {formattedLabel}
                               </div>
                               <div className="mt-1 font-mono text-sm">
                                 {displayValue}

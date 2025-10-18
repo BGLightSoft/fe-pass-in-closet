@@ -4,7 +4,9 @@ import { z } from "zod";
 import {
   type CreateCredentialRequest,
   type Credential,
+  type CredentialParameterList,
   credentialSchema,
+  credentialParameterListSchema,
 } from "../schemas/credential-schemas";
 
 export const credentialApi = {
@@ -12,6 +14,19 @@ export const credentialApi = {
     const response = await apiClient.get(`/credential/group/${groupId}`);
     const wrappedSchema = createResponseSchema(
       z.object({ items: z.array(credentialSchema) })
+    );
+    const data = wrappedSchema.parse(response.data);
+    return data.items;
+  },
+
+  getParameterListByType: async (
+    credentialGroupTypeId: string
+  ): Promise<CredentialParameterList[]> => {
+    const response = await apiClient.get(
+      `/credential/parameter-list/${credentialGroupTypeId}`
+    );
+    const wrappedSchema = createResponseSchema(
+      z.object({ items: z.array(credentialParameterListSchema) })
     );
     const data = wrappedSchema.parse(response.data);
     return data.items;

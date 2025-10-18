@@ -19,6 +19,9 @@ export default function CredentialGroupsPage() {
   const [selectedGroupName, setSelectedGroupName] = useState<string | null>(
     null
   );
+  const [selectedGroupTypeId, setSelectedGroupTypeId] = useState<string | null>(
+    null
+  );
 
   const { data: credentials, isLoading: isLoadingCredentials } = useCredentials(
     selectedGroupId || undefined
@@ -28,6 +31,21 @@ export default function CredentialGroupsPage() {
   const handleGroupSelect = (groupId: string, groupName: string) => {
     setSelectedGroupId(groupId);
     setSelectedGroupName(groupName);
+
+    // Find the selected group to get its credentialGroupTypeId
+    const findGroupById = (groups: any[], id: string): any => {
+      for (const group of groups) {
+        if (group.id === id) return group;
+        if (group.children) {
+          const found = findGroupById(group.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const selectedGroup = findGroupById(groups || [], groupId);
+    setSelectedGroupTypeId(selectedGroup?.credentialGroupTypeId || null);
   };
 
   if (isLoading) {
@@ -104,7 +122,13 @@ export default function CredentialGroupsPage() {
                       </p>
                     </div>
                   </div>
-                  <CreateCredentialForm groupId={selectedGroupId} />
+                  {selectedGroupTypeId && (
+                    <CreateCredentialForm
+                      credentialGroupId={selectedGroupId}
+                      credentialGroupTypeId={selectedGroupTypeId}
+                      credentialGroupName={selectedGroupName || undefined}
+                    />
+                  )}
                 </div>
                 {isLoadingCredentials ? (
                   <div className="flex items-center justify-center p-8">
