@@ -36,4 +36,8 @@ export const workspaceApi = {
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(`/workspace/${id}`);
   },
+
+  setDefault: async (id: string): Promise<void> => {
+    await apiClient.patch(`/workspace/${id}/set-default`);
+  },
 };

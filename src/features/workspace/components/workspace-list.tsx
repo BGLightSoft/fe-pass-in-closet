@@ -20,9 +20,11 @@ import {
   CheckCircle2,
   XCircle,
   Star,
+  StarOff,
 } from "lucide-react";
 import { useDeleteWorkspace } from "../hooks/use-delete-workspace";
 import { useWorkspaces } from "../hooks/use-workspaces";
+import { useSetDefaultWorkspace } from "../hooks/use-set-default-workspace";
 import { useWorkspaceStore } from "../store/workspace-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { EditWorkspaceForm } from "./edit-workspace-form";
@@ -31,6 +33,8 @@ export function WorkspaceList() {
   const { data: workspaces, isLoading } = useWorkspaces();
   const { mutate: deleteWorkspace, isPending: isDeleting } =
     useDeleteWorkspace();
+  const { mutate: setDefaultWorkspace, isPending: isSettingDefault } =
+    useSetDefaultWorkspace();
   const { currentWorkspace, setCurrentWorkspace } = useWorkspaceStore();
   const queryClient = useQueryClient();
 
@@ -171,6 +175,26 @@ export function WorkspaceList() {
                     </>
                   ) : (
                     "Select"
+                  )}
+                </Button>
+                <Button
+                  variant={workspace.isDefault ? "default" : "ghost"}
+                  size="sm"
+                  className={`h-7 w-7 p-0 ${
+                    workspace.isDefault
+                      ? "text-amber-600 hover:bg-amber-100"
+                      : "text-gray-400 hover:bg-amber-50 hover:text-amber-600"
+                  }`}
+                  onClick={() => setDefaultWorkspace(workspace.id)}
+                  disabled={isSettingDefault || workspace.isDefault}
+                  title={
+                    workspace.isDefault ? "Default workspace" : "Set as default"
+                  }
+                >
+                  {workspace.isDefault ? (
+                    <Star size={14} className="fill-amber-600" />
+                  ) : (
+                    <StarOff size={14} />
                   )}
                 </Button>
                 <EditWorkspaceForm workspace={workspace} />
