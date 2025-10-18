@@ -10,7 +10,7 @@ const navigation = [
 
 export function Sidebar() {
   return (
-    <aside className="w-64 border-r bg-white">
+    <aside className="w-64 border-r bg-white z-10">
       <div className="flex h-16 items-center justify-center border-b px-6">
         <img
           src="/pass-in-closet.png"

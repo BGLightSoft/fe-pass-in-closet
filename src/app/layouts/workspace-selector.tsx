@@ -9,6 +9,7 @@ export function WorkspaceSelector() {
   const { data: workspaces, isLoading } = useWorkspaces();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const queryClient = useQueryClient();
 
   // Close dropdown when clicking outside
@@ -33,6 +34,7 @@ export function WorkspaceSelector() {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-lg border bg-white px-3 py-2 text-sm hover:bg-gray-50"
@@ -44,7 +46,17 @@ export function WorkspaceSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-64 rounded-lg border bg-white shadow-lg">
+        <div
+          className="fixed z-[9999] w-64 rounded-lg border bg-white shadow-xl"
+          style={{
+            top: buttonRef.current
+              ? buttonRef.current.getBoundingClientRect().bottom + 8
+              : 0,
+            left: buttonRef.current
+              ? buttonRef.current.getBoundingClientRect().left
+              : 0,
+          }}
+        >
           <div className="p-2">
             {workspaces.map((workspace) => (
               <button
