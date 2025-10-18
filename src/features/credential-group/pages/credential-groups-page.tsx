@@ -151,30 +151,17 @@ export default function CredentialGroupsPage() {
         <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-16 translate-y-16 rounded-full bg-white/10 blur-2xl" />
 
         <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-white/20 p-2 backdrop-blur-sm">
-                <Layers size={24} className="text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold">Credential Groups</h1>
-                <p className="mt-1 text-sm text-purple-100">
-                  Organize your credentials in a structured hierarchy
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-white/20 p-2 backdrop-blur-sm">
+              <Layers size={24} className="text-white" />
             </div>
-            <CreateCredentialGroupForm />
+            <div>
+              <h1 className="text-2xl font-bold">Credential Groups</h1>
+              <p className="text-sm text-purple-100">
+                Organize your credentials in a structured hierarchy
+              </p>
+            </div>
           </div>
-
-          {currentWorkspace && (
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-              <FolderTree size={14} />
-              <span className="text-xs">
-                Workspace:{" "}
-                <span className="font-semibold">{currentWorkspace.name}</span>
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -203,16 +190,19 @@ export default function CredentialGroupsPage() {
             <CardContent className="p-0">
               {/* Search Header */}
               <div className="border-b border-gray-300 bg-gradient-to-r from-purple-50 to-blue-50 p-3">
-                <div className="mb-2 flex items-center gap-2">
-                  <FolderTree size={16} className="text-purple-600" />
-                  <h2 className="text-sm font-semibold text-gray-900">
-                    Groups
-                  </h2>
-                  {groups && groups.length > 0 && (
-                    <span className="ml-auto rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
-                      {groups.length}
-                    </span>
-                  )}
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FolderTree size={16} className="text-purple-600" />
+                    <h2 className="text-sm font-semibold text-gray-900">
+                      Groups
+                    </h2>
+                    {groups && groups.length > 0 && (
+                      <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                        {groups.length}
+                      </span>
+                    )}
+                  </div>
+                  <CreateCredentialGroupForm />
                 </div>
 
                 {/* Search Input */}

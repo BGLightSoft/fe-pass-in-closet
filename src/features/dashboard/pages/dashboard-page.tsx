@@ -13,14 +13,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { useWorkspaces } from "@/features/workspace/hooks/use-workspaces";
-import { useWorkspaceStore } from "@/features/workspace/store/workspace-store";
 import { useCredentialGroups } from "@/features/credential-group/hooks/use-credential-groups";
 import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
   const navigate = useNavigate();
   const { data: workspaces, isLoading: isLoadingWorkspaces } = useWorkspaces();
-  const { currentWorkspace } = useWorkspaceStore();
   const { data: credentialGroups, isLoading: isLoadingGroups } =
     useCredentialGroups();
 
@@ -150,7 +148,7 @@ export default function DashboardPage() {
         <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-16 translate-y-16 rounded-full bg-white/10 blur-2xl" />
 
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center gap-3">
             <div className="rounded-lg bg-white/20 p-2 backdrop-blur-sm">
               <Shield size={24} className="text-white" />
             </div>
@@ -161,16 +159,6 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
-
-          {currentWorkspace && (
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
-              <FolderTree size={14} />
-              <span className="text-xs">
-                Current Workspace:{" "}
-                <span className="font-semibold">{currentWorkspace.name}</span>
-              </span>
-            </div>
-          )}
         </div>
       </div>
 
@@ -184,16 +172,16 @@ export default function DashboardPage() {
             <div
               className={`absolute right-0 top-0 h-20 w-20 translate-x-4 -translate-y-4 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 transition-transform group-hover:scale-110`}
             />
-            <CardContent className="relative p-4">
+            <CardContent className="relative p-3">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <p className="text-xs font-medium text-gray-600">
                     {stat.title}
                   </p>
                   {isLoading ? (
-                    <div className="mt-1 h-6 w-16 animate-pulse rounded bg-gray-200" />
+                    <div className="mt-1 h-5 w-12 animate-pulse rounded bg-gray-200" />
                   ) : (
-                    <p className="mt-1 text-xl font-bold text-gray-900">
+                    <p className="mt-1 text-lg font-bold text-gray-900">
                       {stat.value}
                     </p>
                   )}
@@ -201,8 +189,8 @@ export default function DashboardPage() {
                     {stat.description}
                   </p>
                 </div>
-                <div className={`rounded-lg ${stat.bgColor} p-2`}>
-                  <stat.icon size={18} className={stat.textColor} />
+                <div className={`rounded-lg ${stat.bgColor} p-1.5`}>
+                  <stat.icon size={16} className={stat.textColor} />
                 </div>
               </div>
             </CardContent>
@@ -212,23 +200,23 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <Card className="border-gray-300 shadow-sm">
-        <CardContent className="p-4">
-          <div className="mb-4 flex items-center gap-2">
-            <Zap size={18} className="text-blue-600" />
-            <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
+        <CardContent className="p-3">
+          <div className="mb-3 flex items-center gap-2">
+            <Zap size={16} className="text-blue-600" />
+            <h2 className="text-base font-bold text-gray-900">Quick Actions</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {quickActions.map((action, index) => (
               <button
                 key={index}
                 onClick={action.onClick}
-                className="group relative overflow-hidden rounded-lg border border-gray-300 bg-white p-4 text-left transition-all hover:border-blue-400 hover:shadow-md"
+                className="group relative overflow-hidden rounded-lg border border-gray-300 bg-white p-3 text-left transition-all hover:border-blue-400 hover:shadow-md"
               >
                 <div
-                  className={`mb-3 inline-flex rounded-lg bg-${action.color}-100 p-2`}
+                  className={`mb-2 inline-flex rounded-lg bg-${action.color}-100 p-1.5`}
                 >
                   <action.icon
-                    size={18}
+                    size={16}
                     className={`text-${action.color}-600`}
                   />
                 </div>
@@ -239,8 +227,8 @@ export default function DashboardPage() {
                   {action.description}
                 </p>
                 <ArrowRight
-                  size={16}
-                  className="absolute bottom-4 right-4 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-600"
+                  size={14}
+                  className="absolute bottom-3 right-3 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-600"
                 />
               </button>
             ))}
@@ -250,23 +238,23 @@ export default function DashboardPage() {
 
       {/* Features Grid */}
       <Card className="border-gray-300 shadow-sm">
-        <CardContent className="p-4">
-          <div className="mb-4 flex items-center gap-2">
-            <TrendingUp size={18} className="text-green-600" />
-            <h2 className="text-lg font-bold text-gray-900">
+        <CardContent className="p-3">
+          <div className="mb-3 flex items-center gap-2">
+            <TrendingUp size={16} className="text-green-600" />
+            <h2 className="text-base font-bold text-gray-900">
               Why Pass-in-Closet?
             </h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group p-3 rounded-lg border border-gray-300 transition-all hover:border-blue-300 hover:shadow-md"
+                className="group p-2.5 rounded-lg border border-gray-300 transition-all hover:border-blue-300 hover:shadow-md"
               >
                 <div
-                  className={`mb-3 inline-flex rounded-lg ${feature.bgColor} p-2 transition-transform group-hover:scale-105`}
+                  className={`mb-2 inline-flex rounded-lg ${feature.bgColor} p-1.5 transition-transform group-hover:scale-105`}
                 >
-                  <feature.icon size={18} className={feature.color} />
+                  <feature.icon size={16} className={feature.color} />
                 </div>
                 <h3 className="text-sm font-semibold text-gray-900">
                   {feature.title}

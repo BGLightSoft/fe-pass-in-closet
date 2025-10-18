@@ -61,9 +61,12 @@ export function CreateWorkspaceForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="lg" className="gap-2">
-          <Plus size={20} />
-          Create New Workspace
+        <Button
+          size="sm"
+          className="h-8 gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm hover:shadow-md transition-all"
+        >
+          <Plus size={14} />
+          <span className="text-xs font-medium">New Workspace</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">

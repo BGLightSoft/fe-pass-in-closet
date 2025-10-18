@@ -89,9 +89,12 @@ export function CreateCredentialGroupForm({
             <Plus size={14} />
           </Button>
         ) : (
-          <Button size="lg" className="gap-2">
-            <Plus size={20} />
-            Create New Group
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-sm hover:shadow-md transition-all"
+          >
+            <Plus size={14} />
+            <span className="text-xs font-medium">New Group</span>
           </Button>
         )}
       </DialogTrigger>

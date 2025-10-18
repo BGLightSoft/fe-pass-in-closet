@@ -88,9 +88,12 @@ export function CreateCredentialForm({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size="sm" className="gap-1">
-          <Plus size={16} />
-          New Credential
+        <Button
+          size="sm"
+          className="h-8 gap-1.5 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-sm hover:shadow-md transition-all"
+        >
+          <Plus size={14} />
+          <span className="text-xs font-medium">New Credential</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
