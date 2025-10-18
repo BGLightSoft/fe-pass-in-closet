@@ -2,11 +2,24 @@ import { z } from "zod";
 
 export const workspaceSchema = z.object({
   id: z.string(),
-  name: z.string().nullable(),
+  name: z
+    .string()
+    .nullable()
+    .transform((val) => (val === null ? "" : String(val))),
   isActive: z.boolean(),
   isDefault: z.boolean().optional(),
-  createdAt: z.string().or(z.date()),
-  updatedAt: z.string().or(z.date()),
+  createdAt: z
+    .string()
+    .or(z.date())
+    .transform((val) =>
+      val instanceof Date ? val.toISOString() : String(val)
+    ),
+  updatedAt: z
+    .string()
+    .or(z.date())
+    .transform((val) =>
+      val instanceof Date ? val.toISOString() : String(val)
+    ),
 });
 
 export const createWorkspaceRequestSchema = z.object({

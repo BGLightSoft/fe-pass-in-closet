@@ -15,6 +15,7 @@ export function useCreateCredential() {
       console.log("✅ API Success - Credential created:", data);
       // Invalidate credentials list
       queryClient.invalidateQueries({ queryKey: ["credentials"] });
+      queryClient.invalidateQueries({ queryKey: ["all-credentials"] });
       // Invalidate credential groups to update counts
       queryClient.invalidateQueries({ queryKey: ["credential-groups"] });
       toast({

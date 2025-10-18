@@ -19,6 +19,7 @@ export function useUpdateCredential() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["credentials"] });
+      queryClient.invalidateQueries({ queryKey: ["all-credentials"] });
       queryClient.invalidateQueries({ queryKey: ["credential-groups"] });
       toast({
         title: "✨ Credential updated",

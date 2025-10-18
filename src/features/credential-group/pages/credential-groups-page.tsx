@@ -50,6 +50,7 @@ export default function CredentialGroupsPage() {
   const { mutate: deleteCredential } = useDeleteCredential();
 
   const handleGroupSelect = (groupId: string, groupName: string) => {
+    console.log("🔍 Selecting group:", { groupId, groupName });
     setSelectedGroupId(groupId);
     setSelectedGroupName(groupName);
 
@@ -65,6 +66,11 @@ export default function CredentialGroupsPage() {
     };
 
     const selectedGroup = findGroupById(groups || [], groupId);
+    console.log("🔍 Selected group:", selectedGroup);
+    console.log(
+      "🔍 CredentialGroupTypeId:",
+      selectedGroup?.credentialGroupTypeId
+    );
     setSelectedGroupTypeId(selectedGroup?.credentialGroupTypeId || null);
   };
 

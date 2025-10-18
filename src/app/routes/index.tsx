@@ -1,3 +1,4 @@
+import { CredentialsModulePage } from "@/features/credential/pages/credentials-module-page";
 import { ErrorFallback } from "@/shared/ui/error-fallback";
 import { PageLoader } from "@/shared/ui/page-loader";
 import { Suspense, lazy } from "react";
@@ -25,6 +26,9 @@ const CredentialsPage = lazy(
 const AccountSettingsPage = lazy(
   () => import("@/features/account/pages/account-settings-page")
 );
+// const CredentialsModulePage = lazy(
+//   () => import("@/features/credential/pages/credentials-module-page")
+// );
 
 export function AppRoutes() {
   return (
@@ -97,6 +101,10 @@ export function AppRoutes() {
                 <AccountSettingsPage />
               </Suspense>
             }
+          />
+          <Route
+            path="/credentials-module"
+            element={<CredentialsModulePage />}
           />
         </Route>
 

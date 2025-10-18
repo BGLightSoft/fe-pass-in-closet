@@ -6,7 +6,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
@@ -25,10 +24,15 @@ import { toTitleCase } from "@/shared/lib/format-utils";
 
 interface EditCredentialFormProps {
   credential: Credential;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function EditCredentialForm({ credential }: EditCredentialFormProps) {
-  const [open, setOpen] = useState(false);
+export function EditCredentialForm({
+  credential,
+  open,
+  onOpenChange,
+}: EditCredentialFormProps) {
   const [passwordVisibility, setPasswordVisibility] = useState<
     Record<string, boolean>
   >({});
@@ -84,29 +88,15 @@ export function EditCredentialForm({ credential }: EditCredentialFormProps) {
       { id: credential.id, data },
       {
         onSuccess: () => {
-          setOpen(false);
+          onOpenChange(false);
           reset();
         },
       }
     );
   };
 
-  const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="ghost"
-          className="h-8 text-blue-600 hover:bg-blue-100 hover:text-blue-700"
-          title="Edit credential"
-        >
-          <Edit size={16} />
-        </Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader className="border-b border-gray-200 pb-4">
           <div className="flex items-center gap-3">
@@ -240,7 +230,7 @@ export function EditCredentialForm({ credential }: EditCredentialFormProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => handleOpenChange(false)}
+              onClick={() => onOpenChange(false)}
               disabled={isPending}
               className="h-10"
             >

@@ -1,11 +1,12 @@
 import { cn } from "@/shared/lib/utils";
-import { FolderTree, Key, LayoutDashboard } from "lucide-react";
+import { FolderTree, Key, LayoutDashboard, Grid3X3 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Workspaces", href: "/workspaces", icon: FolderTree },
   { name: "Credentials", href: "/credential-groups", icon: Key },
+  { name: "Credentials Module", href: "/credentials-module", icon: Grid3X3 },
 ];
 
 export function Sidebar() {

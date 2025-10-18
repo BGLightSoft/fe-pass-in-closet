@@ -6,11 +6,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/shared/ui/dialog";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
-import { Loader2, Plus, Key, Eye, EyeOff } from "lucide-react";
+import { Loader2, Key, Eye, EyeOff, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,14 +23,17 @@ interface CreateCredentialFormProps {
   credentialGroupId: string;
   credentialGroupTypeId: string;
   credentialGroupName?: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function CreateCredentialForm({
   credentialGroupId,
   credentialGroupTypeId,
   credentialGroupName,
+  open,
+  onOpenChange,
 }: CreateCredentialFormProps) {
-  const [open, setOpen] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState<
     Record<string, boolean>
   >({});
@@ -39,6 +41,14 @@ export function CreateCredentialForm({
 
   const { data: parameterList, isLoading: isLoadingParameters } =
     useCredentialParameterList(credentialGroupTypeId);
+
+  console.log("🔍 CreateCredentialForm props:", {
+    credentialGroupId,
+    credentialGroupTypeId,
+    credentialGroupName,
+  });
+  console.log("🔍 Parameter list:", parameterList);
+  console.log("🔍 Is loading parameters:", isLoadingParameters);
 
   // Dynamic form schema based on parameter list (excluding 'index')
   const formSchema = z.object({
@@ -82,14 +92,14 @@ export function CreateCredentialForm({
 
     createCredential.mutate(requestData, {
       onSuccess: () => {
-        setOpen(false);
+        onOpenChange(false);
         reset();
       },
     });
   };
 
   const handleOpenChange = (newOpen: boolean) => {
-    setOpen(newOpen);
+    onOpenChange(newOpen);
     if (!newOpen) {
       reset();
       setPasswordVisibility({});
@@ -98,15 +108,6 @@ export function CreateCredentialForm({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="h-8 gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm hover:shadow-md transition-all"
-        >
-          <Plus size={14} />
-          <span className="text-xs font-medium">New Credential</span>
-        </Button>
-      </DialogTrigger>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="border-b border-gray-200 pb-4">
           <div className="flex items-center gap-3">
