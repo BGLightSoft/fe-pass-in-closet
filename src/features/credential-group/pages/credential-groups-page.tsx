@@ -22,6 +22,10 @@ import {
 } from "lucide-react";
 import { useWorkspaceStore } from "@/features/workspace/store/workspace-store";
 import { Input } from "@/shared/ui/input";
+import {
+  getCredentialGroupTypeIcon,
+  getCredentialGroupTypeColor,
+} from "@/shared/lib/credential-group-type-icons";
 
 export default function CredentialGroupsPage() {
   const { currentWorkspace } = useWorkspaceStore();
@@ -279,9 +283,19 @@ export default function CredentialGroupsPage() {
                         <span>Selected Group</span>
                         <ChevronRight size={12} />
                       </div>
-                      <h2 className="mt-1 text-xl font-bold text-gray-900">
-                        {selectedGroupName}
-                      </h2>
+                      <div className="mt-1 flex items-center gap-2">
+                        {selectedGroupTypeId &&
+                          (() => {
+                            const TypeIcon =
+                              getCredentialGroupTypeIcon(selectedGroupTypeId);
+                            const typeColor =
+                              getCredentialGroupTypeColor(selectedGroupTypeId);
+                            return <TypeIcon size={20} className={typeColor} />;
+                          })()}
+                        <h2 className="text-xl font-bold text-gray-900">
+                          {selectedGroupName}
+                        </h2>
+                      </div>
                       {credentials && (
                         <p className="mt-1 text-xs text-gray-600">
                           {credentials.length}{" "}

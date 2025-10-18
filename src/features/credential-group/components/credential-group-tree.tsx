@@ -23,6 +23,11 @@ import { useState } from "react";
 import type { CredentialGroup } from "../schemas/credential-group-schemas";
 import { CreateCredentialGroupForm } from "./create-credential-group-form";
 import { EditCredentialGroupForm } from "./edit-credential-group-form";
+import {
+  getCredentialGroupTypeIcon,
+  getCredentialGroupTypeColor,
+  getCredentialGroupTypeBgColor,
+} from "@/shared/lib/credential-group-type-icons";
 
 interface CredentialGroupNodeProps {
   group: CredentialGroup;
@@ -47,6 +52,11 @@ function CredentialGroupNode({
 
   // Use group's own type name if available (root group), otherwise use inherited
   const currentTypeName = group.credentialGroupTypeName || rootTypeName;
+
+  // Get appropriate icon and color for the type
+  const TypeIcon = getCredentialGroupTypeIcon(currentTypeName);
+  const typeColor = getCredentialGroupTypeColor(currentTypeName);
+  const typeBgColor = getCredentialGroupTypeBgColor(currentTypeName);
 
   const handleSelect = () => {
     if (onSelect) {
@@ -78,11 +88,13 @@ function CredentialGroupNode({
           <div className="w-6" />
         )}
 
-        {isExpanded ? (
-          <FolderOpen size={18} className="flex-shrink-0 text-blue-600" />
-        ) : (
-          <Folder size={18} className="flex-shrink-0 text-gray-500" />
-        )}
+        {/* Type-specific icon */}
+        <TypeIcon
+          size={18}
+          className={`flex-shrink-0 ${
+            isExpanded ? typeColor : "text-gray-500"
+          }`}
+        />
 
         <button
           type="button"
@@ -97,7 +109,9 @@ function CredentialGroupNode({
             <span className="font-medium">{group.name}</span>
             {group.credentialGroupId === null &&
               group.credentialGroupTypeName && (
-                <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                <span
+                  className={`rounded px-2 py-0.5 text-xs font-medium ${typeBgColor} ${typeColor}`}
+                >
                   {group.credentialGroupTypeName}
                 </span>
               )}
@@ -140,10 +154,10 @@ function CredentialGroupNode({
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle className="flex items-center gap-2">
-                  <AlertTriangle className="text-red-600" size={24} />
+                  <AlertTriangle className="text-red-600" size={20} />
                   Delete Credential Group?
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-base">
+                <AlertDialogDescription className="text-sm">
                   Are you sure you want to delete{" "}
                   <span className="font-semibold text-gray-900">
                     "{group.name}"
@@ -153,12 +167,12 @@ function CredentialGroupNode({
                     <p className="font-medium text-red-900">
                       ⚠️ This will permanently delete:
                     </p>
-                    <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-red-800">
+                    <ul className="mt-2 list-inside list-disc space-y-1 text-xs text-red-800">
                       <li>All sub-groups within this group</li>
                       <li>All credentials in this group and sub-groups</li>
                       <li>All associated credential data</li>
                     </ul>
-                    <p className="mt-2 text-sm font-semibold text-red-900">
+                    <p className="mt-2 text-xs font-semibold text-red-900">
                       This action cannot be undone!
                     </p>
                   </div>
@@ -213,11 +227,11 @@ export function CredentialGroupTree({
   if (!groups || groups.length === 0) {
     return (
       <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center p-12">
-          <div className="rounded-full bg-gray-100 p-4">
-            <Folder size={48} className="text-gray-400" />
+        <CardContent className="flex flex-col items-center justify-center p-8">
+          <div className="rounded-full bg-gray-100 p-3">
+            <Folder size={32} className="text-gray-400" />
           </div>
-          <p className="mt-4 text-lg font-medium text-gray-900">
+          <p className="mt-3 text-lg font-medium text-gray-900">
             No credential groups yet
           </p>
           <p className="mt-1 text-sm text-gray-500">
@@ -232,11 +246,11 @@ export function CredentialGroupTree({
     <Card>
       <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-purple-50">
         <CardTitle className="flex items-center gap-2">
-          <FolderOpen className="text-blue-600" size={20} />
+          <FolderOpen className="text-blue-600" size={18} />
           Your Credential Groups
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-1 p-4">
+      <CardContent className="space-y-1 p-3">
         {groups.map((group) => (
           <CredentialGroupNode
             key={group.id}
