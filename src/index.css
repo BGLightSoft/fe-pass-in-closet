@@ -72,5 +72,71 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-size: 14px; /* Kompakt font boyutu */
+    line-height: 1.4; /* Kompakt satır yüksekliği */
+  }
+
+  /* Kompakt tipografi */
+  h1 {
+    @apply text-2xl font-bold;
+  }
+
+  h2 {
+    @apply text-xl font-bold;
+  }
+
+  h3 {
+    @apply text-lg font-semibold;
+  }
+
+  h4 {
+    @apply text-base font-semibold;
+  }
+
+  /* Kompakt spacing */
+  .space-y-6 > * + * {
+    margin-top: 1rem; /* 16px */
+  }
+
+  .space-y-4 > * + * {
+    margin-top: 0.75rem; /* 12px */
+  }
+
+  .space-y-3 > * + * {
+    margin-top: 0.5rem; /* 8px */
+  }
+
+  .space-y-2 > * + * {
+    margin-top: 0.375rem; /* 6px */
+  }
+
+  /* Kompakt padding */
+  .p-6 {
+    padding: 1rem; /* 16px */
+  }
+
+  .p-4 {
+    padding: 0.75rem; /* 12px */
+  }
+
+  .p-3 {
+    padding: 0.5rem; /* 8px */
+  }
+
+  /* Kompakt margin */
+  .mb-6 {
+    margin-bottom: 1rem; /* 16px */
+  }
+
+  .mb-4 {
+    margin-bottom: 0.75rem; /* 12px */
+  }
+
+  .mb-3 {
+    margin-bottom: 0.5rem; /* 8px */
+  }
+
+  .mb-2 {
+    margin-bottom: 0.375rem; /* 6px */
   }
 }

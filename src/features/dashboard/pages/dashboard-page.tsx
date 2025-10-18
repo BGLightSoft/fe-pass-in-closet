@@ -91,29 +91,28 @@ export default function DashboardPage() {
     {
       icon: Lock,
       title: "End-to-End Encryption",
-      description:
-        "Your credentials are encrypted with industry-standard AES-256",
+      description: "AES-256 encryption for all credentials",
       color: "text-blue-600",
       bgColor: "bg-blue-100",
     },
     {
       icon: Layers,
       title: "Organized Structure",
-      description: "Group your credentials by project, team, or category",
+      description: "Group credentials by project or team",
       color: "text-purple-600",
       bgColor: "bg-purple-100",
     },
     {
       icon: Zap,
       title: "Quick Access",
-      description: "Find and copy your credentials in seconds",
+      description: "Find and copy credentials instantly",
       color: "text-green-600",
       bgColor: "bg-green-100",
     },
     {
       icon: Activity,
       title: "Real-time Sync",
-      description: "Access your credentials from anywhere, anytime",
+      description: "Access from anywhere, anytime",
       color: "text-orange-600",
       bgColor: "bg-orange-100",
     },
@@ -144,29 +143,29 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-8 text-white shadow-xl">
-        <div className="absolute right-0 top-0 h-64 w-64 translate-x-32 -translate-y-32 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-64 w-64 -translate-x-32 translate-y-32 rounded-full bg-white/10 blur-3xl" />
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-6 text-white shadow-lg">
+        <div className="absolute right-0 top-0 h-32 w-32 translate-x-16 -translate-y-16 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-16 translate-y-16 rounded-full bg-white/10 blur-2xl" />
 
         <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="rounded-lg bg-white/20 p-2.5 backdrop-blur-sm">
-              <Shield size={32} className="text-white" />
+          <div className="flex items-center gap-3 mb-3">
+            <div className="rounded-lg bg-white/20 p-2 backdrop-blur-sm">
+              <Shield size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold">Welcome Back!</h1>
-              <p className="text-blue-100">
+              <h1 className="text-2xl font-bold">Welcome Back!</h1>
+              <p className="text-sm text-blue-100">
                 Your credentials are secure and organized
               </p>
             </div>
           </div>
 
           {currentWorkspace && (
-            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <FolderTree size={16} />
-              <span className="text-sm">
+            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+              <FolderTree size={14} />
+              <span className="text-xs">
                 Current Workspace:{" "}
                 <span className="font-semibold">{currentWorkspace.name}</span>
               </span>
@@ -176,34 +175,34 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
           <Card
             key={index}
-            className="group relative overflow-hidden border-0 shadow-md transition-all hover:shadow-xl"
+            className="group relative overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
           >
             <div
-              className={`absolute right-0 top-0 h-32 w-32 translate-x-8 -translate-y-8 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 transition-transform group-hover:scale-110`}
+              className={`absolute right-0 top-0 h-20 w-20 translate-x-4 -translate-y-4 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 transition-transform group-hover:scale-110`}
             />
-            <CardContent className="relative p-6">
+            <CardContent className="relative p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-600">
+                  <p className="text-xs font-medium text-gray-600">
                     {stat.title}
                   </p>
                   {isLoading ? (
-                    <div className="mt-2 h-8 w-20 animate-pulse rounded bg-gray-200" />
+                    <div className="mt-1 h-6 w-16 animate-pulse rounded bg-gray-200" />
                   ) : (
-                    <p className="mt-2 text-3xl font-bold text-gray-900">
+                    <p className="mt-1 text-xl font-bold text-gray-900">
                       {stat.value}
                     </p>
                   )}
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-0.5 text-xs text-gray-500">
                     {stat.description}
                   </p>
                 </div>
-                <div className={`rounded-xl ${stat.bgColor} p-3`}>
-                  <stat.icon size={24} className={stat.textColor} />
+                <div className={`rounded-lg ${stat.bgColor} p-2`}>
+                  <stat.icon size={18} className={stat.textColor} />
                 </div>
               </div>
             </CardContent>
@@ -212,34 +211,36 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="border-0 shadow-md">
-        <CardContent className="p-6">
-          <div className="mb-6 flex items-center gap-2">
-            <Zap size={24} className="text-blue-600" />
-            <h2 className="text-xl font-bold text-gray-900">Quick Actions</h2>
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-4">
+          <div className="mb-4 flex items-center gap-2">
+            <Zap size={18} className="text-blue-600" />
+            <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             {quickActions.map((action, index) => (
               <button
                 key={index}
                 onClick={action.onClick}
-                className="group relative overflow-hidden rounded-xl border-2 border-gray-100 bg-white p-6 text-left transition-all hover:border-blue-200 hover:shadow-lg"
+                className="group relative overflow-hidden rounded-lg border border-gray-100 bg-white p-4 text-left transition-all hover:border-blue-200 hover:shadow-md"
               >
                 <div
-                  className={`mb-4 inline-flex rounded-lg bg-${action.color}-100 p-3`}
+                  className={`mb-3 inline-flex rounded-lg bg-${action.color}-100 p-2`}
                 >
                   <action.icon
-                    size={24}
+                    size={18}
                     className={`text-${action.color}-600`}
                   />
                 </div>
-                <h3 className="font-semibold text-gray-900">{action.title}</h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {action.title}
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
                   {action.description}
                 </p>
                 <ArrowRight
-                  size={20}
-                  className="absolute bottom-6 right-6 text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-blue-600"
+                  size={16}
+                  className="absolute bottom-4 right-4 text-gray-400 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-600"
                 />
               </button>
             ))}
@@ -248,24 +249,26 @@ export default function DashboardPage() {
       </Card>
 
       {/* Features Grid */}
-      <Card className="border-0 shadow-md">
-        <CardContent className="p-6">
-          <div className="mb-6 flex items-center gap-2">
-            <TrendingUp size={24} className="text-green-600" />
-            <h2 className="text-xl font-bold text-gray-900">
+      <Card className="border-0 shadow-sm">
+        <CardContent className="p-4">
+          <div className="mb-4 flex items-center gap-2">
+            <TrendingUp size={18} className="text-green-600" />
+            <h2 className="text-lg font-bold text-gray-900">
               Why Pass-in-Closet?
             </h2>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
               <div key={index} className="group">
                 <div
-                  className={`mb-4 inline-flex rounded-xl ${feature.bgColor} p-3 transition-transform group-hover:scale-110`}
+                  className={`mb-3 inline-flex rounded-lg ${feature.bgColor} p-2 transition-transform group-hover:scale-105`}
                 >
-                  <feature.icon size={24} className={feature.color} />
+                  <feature.icon size={18} className={feature.color} />
                 </div>
-                <h3 className="font-semibold text-gray-900">{feature.title}</h3>
-                <p className="mt-2 text-sm text-gray-500">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {feature.title}
+                </h3>
+                <p className="mt-1 text-xs text-gray-500">
                   {feature.description}
                 </p>
               </div>
@@ -277,27 +280,30 @@ export default function DashboardPage() {
       {/* Getting Started */}
       {totalCredentials === 0 && (
         <Card className="border-2 border-dashed border-blue-200 bg-blue-50">
-          <CardContent className="p-8 text-center">
-            <div className="mx-auto mb-4 inline-flex rounded-full bg-blue-100 p-4">
-              <Clock size={32} className="text-blue-600" />
+          <CardContent className="p-6 text-center">
+            <div className="mx-auto mb-3 inline-flex rounded-full bg-blue-100 p-3">
+              <Clock size={24} className="text-blue-600" />
             </div>
-            <h3 className="mb-2 text-xl font-bold text-gray-900">
+            <h3 className="mb-2 text-lg font-bold text-gray-900">
               Get Started with Pass-in-Closet
             </h3>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-4 text-sm text-gray-600">
               Start organizing your credentials in a secure and structured way
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Button onClick={() => navigate("/workspaces")} className="gap-2">
-                <FolderTree size={16} />
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button
+                onClick={() => navigate("/workspaces")}
+                className="gap-2 text-sm h-8"
+              >
+                <FolderTree size={14} />
                 Create Workspace
               </Button>
               <Button
                 onClick={() => navigate("/credential-groups")}
                 variant="outline"
-                className="gap-2"
+                className="gap-2 text-sm h-8"
               >
-                <Layers size={16} />
+                <Layers size={14} />
                 View Guide
               </Button>
             </div>
@@ -306,9 +312,9 @@ export default function DashboardPage() {
       )}
 
       {/* Footer Info */}
-      <div className="rounded-xl border border-gray-200 bg-gray-50 p-6">
-        <div className="flex items-center gap-3 text-sm text-gray-600">
-          <Shield size={20} className="text-green-600" />
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="flex items-center gap-2 text-xs text-gray-600">
+          <Shield size={16} className="text-green-600" />
           <p>
             <span className="font-semibold text-gray-900">
               Your data is secure.

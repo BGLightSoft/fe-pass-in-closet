@@ -140,21 +140,21 @@ export default function CredentialGroupsPage() {
     : groups || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 p-8 text-white shadow-xl">
-        <div className="absolute right-0 top-0 h-48 w-48 translate-x-24 -translate-y-24 rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-48 w-48 -translate-x-24 translate-y-24 rounded-full bg-white/10 blur-3xl" />
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 p-6 text-white shadow-lg">
+        <div className="absolute right-0 top-0 h-32 w-32 translate-x-16 -translate-y-16 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-16 translate-y-16 rounded-full bg-white/10 blur-2xl" />
 
         <div className="relative z-10">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
-                <Layers size={32} className="text-white" />
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl bg-white/20 p-2 backdrop-blur-sm">
+                <Layers size={24} className="text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold">Credential Groups</h1>
-                <p className="mt-1 text-purple-100">
+                <h1 className="text-2xl font-bold">Credential Groups</h1>
+                <p className="mt-1 text-sm text-purple-100">
                   Organize your credentials in a structured hierarchy
                 </p>
               </div>
@@ -163,9 +163,9 @@ export default function CredentialGroupsPage() {
           </div>
 
           {currentWorkspace && (
-            <div className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-              <FolderTree size={16} />
-              <span className="text-sm">
+            <div className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 backdrop-blur-sm">
+              <FolderTree size={14} />
+              <span className="text-xs">
                 Workspace:{" "}
                 <span className="font-semibold">{currentWorkspace.name}</span>
               </span>
@@ -176,9 +176,9 @@ export default function CredentialGroupsPage() {
 
       {/* Info Banner */}
       <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
-        <CardContent className="flex items-start gap-3 p-4">
-          <Info className="mt-0.5 flex-shrink-0 text-purple-600" size={20} />
-          <div className="text-sm">
+        <CardContent className="flex items-start gap-3 p-3">
+          <Info className="mt-0.5 flex-shrink-0 text-purple-600" size={16} />
+          <div className="text-xs">
             <p className="font-medium text-purple-900">
               How Credential Groups Work
             </p>
@@ -192,16 +192,18 @@ export default function CredentialGroupsPage() {
       </Card>
 
       {/* Main Content */}
-      <div className="grid gap-6 lg:grid-cols-10">
+      <div className="grid gap-4 lg:grid-cols-10">
         {/* Left Panel - Groups Tree */}
         <div className="lg:col-span-3">
-          <Card className="sticky top-6 shadow-lg">
+          <Card className="sticky top-6 shadow-md">
             <CardContent className="p-0">
               {/* Search Header */}
-              <div className="border-b bg-gradient-to-r from-purple-50 to-blue-50 p-4">
-                <div className="mb-3 flex items-center gap-2">
-                  <FolderTree size={20} className="text-purple-600" />
-                  <h2 className="font-semibold text-gray-900">Groups</h2>
+              <div className="border-b bg-gradient-to-r from-purple-50 to-blue-50 p-3">
+                <div className="mb-2 flex items-center gap-2">
+                  <FolderTree size={16} className="text-purple-600" />
+                  <h2 className="text-sm font-semibold text-gray-900">
+                    Groups
+                  </h2>
                   {groups && groups.length > 0 && (
                     <span className="ml-auto rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
                       {groups.length}
@@ -212,38 +214,38 @@ export default function CredentialGroupsPage() {
                 {/* Search Input */}
                 <div className="relative">
                   <Search
-                    size={16}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={14}
+                    className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400"
                   />
                   <Input
                     placeholder="Search groups..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 text-sm"
+                    className="pl-8 text-xs h-8"
                   />
                 </div>
               </div>
 
               {/* Groups Tree */}
-              <div className="max-h-[calc(100vh-24rem)] overflow-y-auto p-4">
+              <div className="max-h-[calc(100vh-20rem)] overflow-y-auto p-3">
                 {isLoadingGroups ? (
-                  <div className="flex items-center justify-center p-8">
+                  <div className="flex items-center justify-center p-6">
                     <div className="text-center">
-                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-purple-600" />
-                      <p className="mt-2 text-sm text-gray-600">
+                      <div className="mx-auto h-6 w-6 animate-spin rounded-full border-4 border-gray-300 border-t-purple-600" />
+                      <p className="mt-2 text-xs text-gray-600">
                         Loading groups...
                       </p>
                     </div>
                   </div>
                 ) : !filteredGroups || filteredGroups.length === 0 ? (
-                  <div className="py-12 text-center">
-                    <div className="mx-auto mb-4 inline-flex rounded-full bg-purple-100 p-4">
-                      <Layers size={32} className="text-purple-600" />
+                  <div className="py-8 text-center">
+                    <div className="mx-auto mb-3 inline-flex rounded-full bg-purple-100 p-3">
+                      <Layers size={24} className="text-purple-600" />
                     </div>
-                    <p className="mb-2 font-medium text-gray-900">
+                    <p className="mb-2 text-sm font-medium text-gray-900">
                       {searchQuery ? "No groups found" : "No groups yet"}
                     </p>
-                    <p className="mb-4 text-sm text-gray-500">
+                    <p className="mb-3 text-xs text-gray-500">
                       {searchQuery
                         ? "Try a different search term"
                         : "Create your first group to get started"}
@@ -266,22 +268,22 @@ export default function CredentialGroupsPage() {
         {/* Right Panel - Credentials */}
         <div className="lg:col-span-7">
           {selectedGroupId ? (
-            <Card className="shadow-lg">
+            <Card className="shadow-md">
               <CardContent className="p-0">
                 {/* Credentials Header */}
-                <div className="border-b bg-gradient-to-r from-blue-50 to-purple-50 p-6">
-                  <div className="mb-4 flex items-start justify-between">
+                <div className="border-b bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+                  <div className="mb-3 flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <FolderTree size={14} />
+                      <div className="flex items-center gap-2 text-xs text-gray-600">
+                        <FolderTree size={12} />
                         <span>Selected Group</span>
-                        <ChevronRight size={14} />
+                        <ChevronRight size={12} />
                       </div>
-                      <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                      <h2 className="mt-1 text-xl font-bold text-gray-900">
                         {selectedGroupName}
                       </h2>
                       {credentials && (
-                        <p className="mt-1 text-sm text-gray-600">
+                        <p className="mt-1 text-xs text-gray-600">
                           {credentials.length}{" "}
                           {credentials.length === 1
                             ? "credential"
@@ -301,13 +303,13 @@ export default function CredentialGroupsPage() {
 
                   {/* Quick Stats */}
                   {credentials && credentials.length > 0 && (
-                    <div className="flex items-center gap-4 text-sm">
-                      <div className="flex items-center gap-1.5 text-green-700">
-                        <Lock size={14} />
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="flex items-center gap-1 text-green-700">
+                        <Lock size={12} />
                         <span className="font-medium">Encrypted</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-blue-700">
-                        <Sparkles size={14} />
+                      <div className="flex items-center gap-1 text-blue-700">
+                        <Sparkles size={12} />
                         <span className="font-medium">Drag to reorder</span>
                       </div>
                     </div>
@@ -315,20 +317,20 @@ export default function CredentialGroupsPage() {
                 </div>
 
                 {/* Credentials List */}
-                <div className="p-6">
+                <div className="p-4">
                   {isLoadingCredentials ? (
-                    <div className="flex items-center justify-center p-12">
+                    <div className="flex items-center justify-center p-8">
                       <div className="text-center">
-                        <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-                        <p className="mt-3 text-sm text-gray-600">
+                        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
+                        <p className="mt-2 text-xs text-gray-600">
                           Loading credentials...
                         </p>
                       </div>
                     </div>
                   ) : credentialsError ? (
                     <Card className="border-red-200 bg-red-50">
-                      <CardContent className="p-6 text-center">
-                        <p className="text-red-900">
+                      <CardContent className="p-4 text-center">
+                        <p className="text-sm text-red-900">
                           Error loading credentials. Please try again.
                         </p>
                       </CardContent>
@@ -344,37 +346,37 @@ export default function CredentialGroupsPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-dashed shadow-lg">
-              <CardContent className="flex flex-col items-center justify-center p-16">
-                <div className="relative mb-6">
+            <Card className="border-dashed shadow-md">
+              <CardContent className="flex flex-col items-center justify-center p-12">
+                <div className="relative mb-4">
                   <div className="absolute inset-0 animate-pulse rounded-full bg-blue-100 blur-xl" />
-                  <div className="relative rounded-full bg-gradient-to-br from-blue-100 to-purple-100 p-6">
-                    <Key size={48} className="text-blue-600" />
+                  <div className="relative rounded-full bg-gradient-to-br from-blue-100 to-purple-100 p-4">
+                    <Key size={32} className="text-blue-600" />
                   </div>
                 </div>
-                <h3 className="mb-2 text-xl font-bold text-gray-900">
+                <h3 className="mb-2 text-lg font-bold text-gray-900">
                   Select a Group
                 </h3>
-                <p className="mb-6 text-center text-gray-600">
+                <p className="mb-4 text-center text-sm text-gray-600">
                   Choose a credential group from the left panel to view and
                   manage its credentials
                 </p>
-                <div className="flex flex-col items-center gap-3 text-sm text-gray-500">
+                <div className="flex flex-col items-center gap-2 text-xs text-gray-500">
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-blue-100 p-1">
-                      <Plus size={12} className="text-blue-600" />
+                      <Plus size={10} className="text-blue-600" />
                     </div>
                     <span>Create groups to organize your credentials</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-purple-100 p-1">
-                      <Layers size={12} className="text-purple-600" />
+                      <Layers size={10} className="text-purple-600" />
                     </div>
                     <span>Nest groups for better organization</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-green-100 p-1">
-                      <Lock size={12} className="text-green-600" />
+                      <Lock size={10} className="text-green-600" />
                     </div>
                     <span>All credentials are encrypted</span>
                   </div>
