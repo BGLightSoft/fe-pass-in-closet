@@ -7,7 +7,10 @@ export function useDeleteCredential() {
   return useMutation({
     mutationFn: (id: string) => credentialApi.delete(id),
     onSuccess: () => {
+      // Invalidate credentials list
       queryClient.invalidateQueries({ queryKey: ["credentials"] });
+      // Invalidate credential groups to update counts
+      queryClient.invalidateQueries({ queryKey: ["credential-groups"] });
     },
   });
 }

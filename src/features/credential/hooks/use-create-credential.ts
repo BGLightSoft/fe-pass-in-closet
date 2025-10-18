@@ -13,7 +13,10 @@ export function useCreateCredential() {
     },
     onSuccess: (data) => {
       console.log("✅ API Success - Credential created:", data);
+      // Invalidate credentials list
       queryClient.invalidateQueries({ queryKey: ["credentials"] });
+      // Invalidate credential groups to update counts
+      queryClient.invalidateQueries({ queryKey: ["credential-groups"] });
       toast({
         title: "✨ Credential created",
         description: "Your credential has been created successfully.",
