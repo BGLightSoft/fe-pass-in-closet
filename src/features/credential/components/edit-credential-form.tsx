@@ -37,7 +37,8 @@ export function EditCredentialForm({ credential }: EditCredentialFormProps) {
   const filteredParameters = useMemo(() => {
     return Object.fromEntries(
       Object.entries(parameters).filter(
-        ([key]) => !["isActive", "createdAt", "updatedAt"].includes(key)
+        ([key]) =>
+          !["isActive", "createdAt", "updatedAt", "index"].includes(key)
       )
     ) as Record<string, string>;
   }, [parameters]);

@@ -37,14 +37,16 @@ export function CreateCredentialForm({
   const { data: parameterList, isLoading: isLoadingParameters } =
     useCredentialParameterList(credentialGroupTypeId);
 
-  // Dynamic form schema based on parameter list
+  // Dynamic form schema based on parameter list (excluding 'index')
   const formSchema = z.object({
     name: z.string().min(1, "Credential name is required").max(255),
     ...Object.fromEntries(
-      (parameterList || []).map((param) => [
-        param.name!,
-        z.string().min(1, `${param.name} is required`),
-      ])
+      (parameterList || [])
+        .filter((param) => param.name !== "index") // Filter out index parameter
+        .map((param) => [
+          param.name!,
+          z.string().min(1, `${param.name} is required`),
+        ])
     ),
   });
 
@@ -123,35 +125,37 @@ export function CreateCredentialForm({
               )}
             </div>
 
-            {/* Dynamic Parameter Inputs */}
-            {parameterList?.map((param) => {
-              const formattedLabel = toTitleCase(param.name!);
-              return (
-                <div key={param.id} className="space-y-2">
-                  <Label htmlFor={param.name!}>
-                    {formattedLabel} <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id={param.name!}
-                    type={
-                      param.name?.toLowerCase().includes("password")
-                        ? "password"
-                        : "text"
-                    }
-                    placeholder={
-                      (param.data as { placeholder?: string })?.placeholder ||
-                      `Enter ${formattedLabel.toLowerCase()}`
-                    }
-                    {...register(param.name! as keyof FormData)}
-                  />
-                  {errors[param.name! as keyof FormData] && (
-                    <p className="text-sm text-red-600">
-                      {errors[param.name! as keyof FormData]?.message}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+            {/* Dynamic Parameter Inputs (excluding 'index') */}
+            {parameterList
+              ?.filter((param) => param.name !== "index") // Don't show index input
+              .map((param) => {
+                const formattedLabel = toTitleCase(param.name!);
+                return (
+                  <div key={param.id} className="space-y-2">
+                    <Label htmlFor={param.name!}>
+                      {formattedLabel} <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id={param.name!}
+                      type={
+                        param.name?.toLowerCase().includes("password")
+                          ? "password"
+                          : "text"
+                      }
+                      placeholder={
+                        (param.data as { placeholder?: string })?.placeholder ||
+                        `Enter ${formattedLabel.toLowerCase()}`
+                      }
+                      {...register(param.name! as keyof FormData)}
+                    />
+                    {errors[param.name! as keyof FormData] && (
+                      <p className="text-sm text-red-600">
+                        {errors[param.name! as keyof FormData]?.message}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
 
             <DialogFooter>
               <Button

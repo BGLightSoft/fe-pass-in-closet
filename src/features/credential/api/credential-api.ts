@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   type CreateCredentialRequest,
   type UpdateCredentialRequest,
+  type UpdateCredentialOrderRequest,
   type Credential,
   type CredentialParameterList,
   credentialSchema,
@@ -48,6 +49,13 @@ export const credentialApi = {
     const response = await apiClient.patch(`/credential/${id}`, data);
     const wrappedSchema = createResponseSchema(credentialSchema);
     return wrappedSchema.parse(response.data);
+  },
+
+  updateOrder: async (
+    groupId: string,
+    data: UpdateCredentialOrderRequest
+  ): Promise<void> => {
+    await apiClient.patch(`/credential/group/${groupId}/order`, data);
   },
 
   delete: async (id: string): Promise<void> => {

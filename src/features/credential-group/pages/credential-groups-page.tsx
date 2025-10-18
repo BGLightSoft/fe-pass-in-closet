@@ -6,7 +6,7 @@ import { CreateCredentialGroupForm } from "../components/create-credential-group
 import { CredentialGroupTree } from "../components/credential-group-tree";
 import { useCredentialGroups } from "../hooks/use-credential-groups";
 import { useDeleteCredentialGroup } from "../hooks/use-delete-credential-group";
-import { CredentialList } from "@/features/credential/components/credential-list";
+import { CredentialList } from "@/features/credential/components/draggable-credential-list";
 import { useCredentials } from "@/features/credential/hooks/use-credentials";
 import { useDeleteCredential } from "@/features/credential/hooks/use-delete-credential";
 import { CreateCredentialForm } from "@/features/credential/components/create-credential-form";
@@ -46,6 +46,58 @@ export default function CredentialGroupsPage() {
 
     const selectedGroup = findGroupById(groups || [], groupId);
     setSelectedGroupTypeId(selectedGroup?.credentialGroupTypeId || null);
+  };
+
+  const handleGroupDelete = (groupId: string) => {
+    // Check if the deleted group or any of its children is currently selected
+    const isSelectedGroupOrChild = (
+      groups: any[],
+      targetId: string,
+      selectedId: string
+    ): boolean => {
+      if (targetId === selectedId) return true;
+
+      for (const group of groups) {
+        if (group.id === targetId) {
+          // Check if selected group is a child of the deleted group
+          const findChildById = (
+            parentGroup: any,
+            childId: string
+          ): boolean => {
+            if (parentGroup.id === childId) return true;
+            if (parentGroup.children) {
+              return parentGroup.children.some((child: any) =>
+                findChildById(child, childId)
+              );
+            }
+            return false;
+          };
+          return findChildById(group, selectedId);
+        }
+        if (group.children) {
+          const found = isSelectedGroupOrChild(
+            group.children,
+            targetId,
+            selectedId
+          );
+          if (found) return found;
+        }
+      }
+      return false;
+    };
+
+    // If the deleted group or its children is currently selected, clear the selection
+    if (
+      selectedGroupId &&
+      isSelectedGroupOrChild(groups || [], groupId, selectedGroupId)
+    ) {
+      setSelectedGroupId(null);
+      setSelectedGroupName(null);
+      setSelectedGroupTypeId(null);
+    }
+
+    // Delete the group
+    deleteGroup(groupId);
   };
 
   if (isLoading) {
@@ -101,7 +153,7 @@ export default function CredentialGroupsPage() {
         <div className="lg:col-span-3">
           <CredentialGroupTree
             groups={groups || []}
-            onDelete={deleteGroup}
+            onDelete={handleGroupDelete}
             onSelect={handleGroupSelect}
             selectedGroupId={selectedGroupId}
           />
@@ -143,6 +195,7 @@ export default function CredentialGroupsPage() {
                   <CredentialList
                     credentials={credentials || []}
                     onDelete={deleteCredential}
+                    credentialGroupId={selectedGroupId}
                   />
                 )}
               </CardContent>

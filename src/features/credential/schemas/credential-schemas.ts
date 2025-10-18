@@ -22,6 +22,15 @@ export const updateCredentialRequestSchema = z.object({
   parameters: z.record(z.string()).optional(),
 });
 
+export const updateCredentialOrderRequestSchema = z.object({
+  credentials: z.array(
+    z.object({
+      credentialId: z.string().uuid(),
+      index: z.number().int().min(0),
+    })
+  ),
+});
+
 export const credentialParameterListSchema = z.object({
   id: z.string(),
   credentialGroupTypeId: z.string().nullable(),
@@ -38,6 +47,9 @@ export type CreateCredentialRequest = z.infer<
 >;
 export type UpdateCredentialRequest = z.infer<
   typeof updateCredentialRequestSchema
+>;
+export type UpdateCredentialOrderRequest = z.infer<
+  typeof updateCredentialOrderRequestSchema
 >;
 export type CredentialParameterList = z.infer<
   typeof credentialParameterListSchema

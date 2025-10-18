@@ -173,7 +173,12 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                     {Object.entries(credential.parameters)
                       .filter(
                         ([key]) =>
-                          !["isActive", "createdAt", "updatedAt"].includes(key)
+                          ![
+                            "isActive",
+                            "createdAt",
+                            "updatedAt",
+                            "index",
+                          ].includes(key)
                       )
                       .map(([key, value]) => {
                         const isPasswordField = key
