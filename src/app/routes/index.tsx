@@ -22,6 +22,9 @@ const CredentialGroupsPage = lazy(
 const CredentialsPage = lazy(
   () => import("@/features/credential/pages/credentials-page")
 );
+const AccountSettingsPage = lazy(
+  () => import("@/features/account/pages/account-settings-page")
+);
 
 export function AppRoutes() {
   return (
@@ -84,6 +87,14 @@ export function AppRoutes() {
             element={
               <Suspense fallback={<PageLoader />}>
                 <CredentialsPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/account/settings"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <AccountSettingsPage />
               </Suspense>
             }
           />
