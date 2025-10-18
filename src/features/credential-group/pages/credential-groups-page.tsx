@@ -146,7 +146,7 @@ export default function CredentialGroupsPage() {
   return (
     <div className="space-y-4">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 p-6 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 p-6 text-white shadow-lg">
         <div className="absolute right-0 top-0 h-32 w-32 translate-x-16 -translate-y-16 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-16 translate-y-16 rounded-full bg-white/10 blur-2xl" />
 
@@ -157,7 +157,7 @@ export default function CredentialGroupsPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold">Credential Groups</h1>
-              <p className="text-sm text-purple-100">
+              <p className="text-sm text-blue-100">
                 Organize your credentials in a structured hierarchy
               </p>
             </div>
@@ -166,14 +166,14 @@ export default function CredentialGroupsPage() {
       </div>
 
       {/* Info Banner */}
-      <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardContent className="flex items-start gap-3 p-3">
-          <Info className="mt-0.5 flex-shrink-0 text-purple-600" size={16} />
+          <Info className="mt-0.5 flex-shrink-0 text-blue-600" size={16} />
           <div className="text-xs">
-            <p className="font-medium text-purple-900">
+            <p className="font-medium text-blue-900">
               How Credential Groups Work
             </p>
-            <p className="mt-1 text-purple-700">
+            <p className="mt-1 text-blue-700">
               Create root groups with specific types (Email, Server, Database),
               then add sub-groups and credentials. Each credential inherits its
               group's type and structure.
@@ -189,15 +189,15 @@ export default function CredentialGroupsPage() {
           <Card className="sticky top-6 shadow-md border-gray-300">
             <CardContent className="p-0">
               {/* Search Header */}
-              <div className="border-b border-gray-300 bg-gradient-to-r from-purple-50 to-blue-50 p-3">
+              <div className="border-b border-gray-300 bg-gradient-to-r from-blue-50 to-purple-50 p-3">
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FolderTree size={16} className="text-purple-600" />
+                    <FolderTree size={16} className="text-blue-600" />
                     <h2 className="text-sm font-semibold text-gray-900">
                       Groups
                     </h2>
                     {groups && groups.length > 0 && (
-                      <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
                         {groups.length}
                       </span>
                     )}
@@ -233,8 +233,8 @@ export default function CredentialGroupsPage() {
                   </div>
                 ) : !filteredGroups || filteredGroups.length === 0 ? (
                   <div className="py-8 text-center">
-                    <div className="mx-auto mb-3 inline-flex rounded-full bg-purple-100 p-3">
-                      <Layers size={24} className="text-purple-600" />
+                    <div className="mx-auto mb-3 inline-flex rounded-full bg-blue-100 p-3">
+                      <Layers size={24} className="text-blue-600" />
                     </div>
                     <p className="mb-2 text-sm font-medium text-gray-900">
                       {searchQuery ? "No groups found" : "No groups yet"}
@@ -373,8 +373,8 @@ export default function CredentialGroupsPage() {
                     <span>Create groups to organize your credentials</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="rounded-full bg-purple-100 p-1">
-                      <Layers size={10} className="text-purple-600" />
+                    <div className="rounded-full bg-blue-100 p-1">
+                      <Layers size={10} className="text-blue-600" />
                     </div>
                     <span>Nest groups for better organization</span>
                   </div>

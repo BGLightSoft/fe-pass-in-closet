@@ -210,12 +210,6 @@ function SortableCredentialItem({
                           </div>
                         </div>
                         <div className="flex gap-1">
-                          <EditCredentialParameterDialog
-                            credential={credential}
-                            parameterKey={key}
-                            parameterValue={String(value)}
-                            parameterLabel={formattedLabel}
-                          />
                           {isPasswordField && (
                             <Button
                               size="sm"
@@ -231,6 +225,12 @@ function SortableCredentialItem({
                               )}
                             </Button>
                           )}
+                          <EditCredentialParameterDialog
+                            credential={credential}
+                            parameterKey={key}
+                            parameterValue={String(value)}
+                            parameterLabel={formattedLabel}
+                          />
                           <Button
                             size="sm"
                             variant="ghost"

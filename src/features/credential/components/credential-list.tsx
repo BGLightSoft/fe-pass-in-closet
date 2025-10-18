@@ -204,12 +204,6 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                               </div>
                             </div>
                             <div className="flex gap-1">
-                              <EditCredentialParameterDialog
-                                credential={credential}
-                                parameterKey={key}
-                                parameterValue={String(value)}
-                                parameterLabel={formattedLabel}
-                              />
                               {isPasswordField && (
                                 <Button
                                   size="sm"
@@ -225,6 +219,12 @@ export function CredentialList({ credentials, onDelete }: CredentialListProps) {
                                   )}
                                 </Button>
                               )}
+                              <EditCredentialParameterDialog
+                                credential={credential}
+                                parameterKey={key}
+                                parameterValue={String(value)}
+                                parameterLabel={formattedLabel}
+                              />
                               <Button
                                 size="sm"
                                 variant="ghost"

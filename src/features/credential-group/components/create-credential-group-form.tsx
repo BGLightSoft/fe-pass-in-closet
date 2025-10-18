@@ -91,7 +91,7 @@ export function CreateCredentialGroupForm({
         ) : (
           <Button
             size="sm"
-            className="h-8 gap-1.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-sm hover:shadow-md transition-all"
+            className="h-8 gap-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-sm hover:shadow-md transition-all"
           >
             <Plus size={14} />
             <span className="text-xs font-medium">New Group</span>
