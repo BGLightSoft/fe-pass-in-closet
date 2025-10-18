@@ -179,7 +179,7 @@ export default function DashboardPage() {
         {stats.map((stat, index) => (
           <Card
             key={index}
-            className="group relative overflow-hidden border-0 shadow-sm transition-all hover:shadow-md"
+            className="group relative overflow-hidden border-gray-300 shadow-sm transition-all hover:shadow-md"
           >
             <div
               className={`absolute right-0 top-0 h-20 w-20 translate-x-4 -translate-y-4 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 transition-transform group-hover:scale-110`}
@@ -211,7 +211,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border-gray-300 shadow-sm">
         <CardContent className="p-4">
           <div className="mb-4 flex items-center gap-2">
             <Zap size={18} className="text-blue-600" />
@@ -222,7 +222,7 @@ export default function DashboardPage() {
               <button
                 key={index}
                 onClick={action.onClick}
-                className="group relative overflow-hidden rounded-lg border border-gray-100 bg-white p-4 text-left transition-all hover:border-blue-200 hover:shadow-md"
+                className="group relative overflow-hidden rounded-lg border border-gray-300 bg-white p-4 text-left transition-all hover:border-blue-400 hover:shadow-md"
               >
                 <div
                   className={`mb-3 inline-flex rounded-lg bg-${action.color}-100 p-2`}
@@ -249,7 +249,7 @@ export default function DashboardPage() {
       </Card>
 
       {/* Features Grid */}
-      <Card className="border-0 shadow-sm">
+      <Card className="border-gray-300 shadow-sm">
         <CardContent className="p-4">
           <div className="mb-4 flex items-center gap-2">
             <TrendingUp size={18} className="text-green-600" />
@@ -259,7 +259,10 @@ export default function DashboardPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, index) => (
-              <div key={index} className="group">
+              <div
+                key={index}
+                className="group p-3 rounded-lg border border-gray-300 transition-all hover:border-blue-300 hover:shadow-md"
+              >
                 <div
                   className={`mb-3 inline-flex rounded-lg ${feature.bgColor} p-2 transition-transform group-hover:scale-105`}
                 >
@@ -279,7 +282,7 @@ export default function DashboardPage() {
 
       {/* Getting Started */}
       {totalCredentials === 0 && (
-        <Card className="border-2 border-dashed border-blue-200 bg-blue-50">
+        <Card className="border-2 border-dashed border-blue-300 bg-blue-50">
           <CardContent className="p-6 text-center">
             <div className="mx-auto mb-3 inline-flex rounded-full bg-blue-100 p-3">
               <Clock size={24} className="text-blue-600" />
@@ -312,7 +315,7 @@ export default function DashboardPage() {
       )}
 
       {/* Footer Info */}
-      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div className="rounded-lg border border-gray-300 bg-gray-50 p-4">
         <div className="flex items-center gap-2 text-xs text-gray-600">
           <Shield size={16} className="text-green-600" />
           <p>

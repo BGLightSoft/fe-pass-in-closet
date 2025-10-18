@@ -179,7 +179,7 @@ export default function CredentialGroupsPage() {
       </div>
 
       {/* Info Banner */}
-      <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-blue-50">
         <CardContent className="flex items-start gap-3 p-3">
           <Info className="mt-0.5 flex-shrink-0 text-purple-600" size={16} />
           <div className="text-xs">
@@ -199,10 +199,10 @@ export default function CredentialGroupsPage() {
       <div className="grid gap-4 lg:grid-cols-10">
         {/* Left Panel - Groups Tree */}
         <div className="lg:col-span-3">
-          <Card className="sticky top-6 shadow-md">
+          <Card className="sticky top-6 shadow-md border-gray-300">
             <CardContent className="p-0">
               {/* Search Header */}
-              <div className="border-b bg-gradient-to-r from-purple-50 to-blue-50 p-3">
+              <div className="border-b border-gray-300 bg-gradient-to-r from-purple-50 to-blue-50 p-3">
                 <div className="mb-2 flex items-center gap-2">
                   <FolderTree size={16} className="text-purple-600" />
                   <h2 className="text-sm font-semibold text-gray-900">
@@ -272,10 +272,10 @@ export default function CredentialGroupsPage() {
         {/* Right Panel - Credentials */}
         <div className="lg:col-span-7">
           {selectedGroupId ? (
-            <Card className="shadow-md">
+            <Card className="shadow-md border-gray-300">
               <CardContent className="p-0">
                 {/* Credentials Header */}
-                <div className="border-b bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+                <div className="border-b border-gray-300 bg-gradient-to-r from-blue-50 to-purple-50 p-4">
                   <div className="mb-3 flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 text-xs text-gray-600">
@@ -360,7 +360,7 @@ export default function CredentialGroupsPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-dashed shadow-md">
+            <Card className="border-dashed border-gray-300 shadow-md">
               <CardContent className="flex flex-col items-center justify-center p-12">
                 <div className="relative mb-4">
                   <div className="absolute inset-0 animate-pulse rounded-full bg-blue-100 blur-xl" />

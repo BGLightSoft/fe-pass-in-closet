@@ -92,7 +92,11 @@ function SortableCredentialItem({
 
   return (
     <div ref={setNodeRef} style={style} className="space-y-3">
-      <Card className={`overflow-hidden ${isDragging ? "shadow-lg" : ""}`}>
+      <Card
+        className={`overflow-hidden border-gray-300 ${
+          isDragging ? "shadow-lg border-blue-400" : ""
+        }`}
+      >
         <CardHeader
           className="cursor-pointer hover:bg-gray-50 transition-colors"
           onClick={() => toggleCredentialExpansion(credential.id)}
@@ -172,7 +176,7 @@ function SortableCredentialItem({
         </CardHeader>
 
         {isExpanded && (
-          <CardContent className="border-t bg-gray-50">
+          <CardContent className="border-t border-gray-300 bg-gray-50">
             {credential.parameters && (
               <div className="space-y-3">
                 {Object.entries(credential.parameters)
@@ -195,7 +199,7 @@ function SortableCredentialItem({
                     return (
                       <div
                         key={key}
-                        className="flex items-center justify-between rounded-lg border bg-white p-3"
+                        className="flex items-center justify-between rounded-lg border border-gray-300 bg-white p-3"
                       >
                         <div className="flex-1">
                           <div className="text-xs font-medium uppercase text-gray-500">
@@ -363,7 +367,7 @@ export function CredentialList({
 
   if (!localCredentials || localCredentials.length === 0) {
     return (
-      <Card>
+      <Card className="border-gray-300">
         <CardContent className="p-8 text-center">
           <p className="text-gray-500">
             No credentials found in this group. Create your first credential!

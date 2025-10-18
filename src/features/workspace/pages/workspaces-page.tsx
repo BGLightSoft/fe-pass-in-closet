@@ -21,7 +21,7 @@ export default function WorkspacesPage() {
         <CreateWorkspaceForm />
       </div>
 
-      <Card className="border-blue-200 bg-blue-50">
+      <Card className="border-blue-300 bg-blue-50">
         <CardContent className="flex items-start gap-3 p-3">
           <Info className="mt-0.5 flex-shrink-0 text-blue-600" size={16} />
           <div className="text-xs text-blue-900">

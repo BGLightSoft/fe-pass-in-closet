@@ -16,18 +16,19 @@ import {
   Trash2,
   AlertTriangle,
   FolderTree,
-  Calendar,
-  CheckCircle2,
-  XCircle,
   Star,
   StarOff,
+  Pencil,
 } from "lucide-react";
+import { Switch } from "@/shared/ui/switch";
 import { useDeleteWorkspace } from "../hooks/use-delete-workspace";
 import { useWorkspaces } from "../hooks/use-workspaces";
 import { useSetDefaultWorkspace } from "../hooks/use-set-default-workspace";
+import { useUpdateWorkspace } from "../hooks/use-update-workspace";
 import { useWorkspaceStore } from "../store/workspace-store";
 import { useQueryClient } from "@tanstack/react-query";
-import { EditWorkspaceForm } from "./edit-workspace-form";
+import { useState } from "react";
+import { Input } from "@/shared/ui/input";
 
 export function WorkspaceList() {
   const { data: workspaces, isLoading } = useWorkspaces();
@@ -35,8 +36,47 @@ export function WorkspaceList() {
     useDeleteWorkspace();
   const { mutate: setDefaultWorkspace, isPending: isSettingDefault } =
     useSetDefaultWorkspace();
+  const { mutate: updateWorkspace } = useUpdateWorkspace();
   const { currentWorkspace, setCurrentWorkspace } = useWorkspaceStore();
   const queryClient = useQueryClient();
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
+
+  const handleNameEdit = (workspaceId: string, currentName: string) => {
+    setEditingId(workspaceId);
+    setEditingName(currentName || "");
+  };
+
+  const handleNameSave = (workspace: any) => {
+    if (editingName.trim() && editingName !== workspace.name) {
+      updateWorkspace(
+        {
+          id: workspace.id,
+          data: {
+            name: editingName.trim(),
+            isActive: workspace.isActive,
+          },
+        },
+        {
+          onSuccess: () => {
+            setEditingId(null);
+          },
+        }
+      );
+    } else {
+      setEditingId(null);
+    }
+  };
+
+  const handleToggleActive = (workspace: any) => {
+    updateWorkspace({
+      id: workspace.id,
+      data: {
+        name: workspace.name || "",
+        isActive: !workspace.isActive,
+      },
+    });
+  };
 
   if (isLoading) {
     return (
@@ -51,7 +91,7 @@ export function WorkspaceList() {
 
   if (!workspaces || workspaces.length === 0) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed border-gray-300">
         <CardContent className="flex flex-col items-center justify-center p-8">
           <div className="rounded-full bg-gray-100 p-3">
             <FolderTree size={32} className="text-gray-400" />
@@ -71,94 +111,100 @@ export function WorkspaceList() {
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {workspaces.map((workspace) => {
         const isSelected = currentWorkspace?.id === workspace.id;
+        const isEditing = editingId === workspace.id;
 
         return (
           <Card
             key={workspace.id}
-            className={`group relative overflow-hidden transition-all hover:shadow-md ${
+            className={`group relative overflow-hidden transition-all duration-200 ${
               isSelected
-                ? "border-blue-500 bg-gradient-to-br from-blue-50 to-white ring-2 ring-blue-200"
-                : "hover:border-gray-300"
+                ? "border-blue-400 bg-gradient-to-br from-blue-50 via-blue-50/50 to-white ring-2 ring-blue-300 shadow-lg"
+                : "border-gray-300 hover:border-blue-300 hover:shadow-md"
             }`}
           >
-            {/* Selected Indicator */}
-            {isSelected && (
-              <div className="absolute right-0 top-0">
-                <div className="relative">
-                  <div className="absolute -right-6 -top-6 h-12 w-12 rotate-45 bg-blue-500" />
-                  <Check
-                    size={12}
-                    className="absolute right-1.5 top-1.5 text-white"
-                  />
-                </div>
-              </div>
-            )}
-
             <CardContent className="p-4">
-              {/* Header */}
-              <div className="mb-3 flex items-start justify-between">
-                <div className="flex items-center gap-2">
+              {/* Header with Icon and Name */}
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <div
-                    className={`rounded-lg p-2 ${
-                      isSelected ? "bg-blue-600" : "bg-blue-100"
+                    className={`rounded-lg p-2.5 transition-all duration-200 ${
+                      isSelected
+                        ? "bg-blue-600 shadow-lg shadow-blue-200"
+                        : "bg-blue-100 group-hover:bg-blue-200"
                     }`}
                   >
                     <FolderTree
-                      size={16}
+                      size={18}
                       className={isSelected ? "text-white" : "text-blue-600"}
                     />
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-1">
-                      {workspace.name}
-                    </h3>
+
+                  {/* Active Toggle */}
+                  <div className="flex flex-col items-center gap-1">
+                    <Switch
+                      checked={workspace.isActive}
+                      onCheckedChange={() => handleToggleActive(workspace)}
+                      className={`scale-75 ${
+                        workspace.isActive
+                          ? "data-[state=checked]:bg-green-500"
+                          : ""
+                      }`}
+                    />
+                    <span
+                      className={`text-xs font-medium ${
+                        workspace.isActive ? "text-green-600" : "text-gray-500"
+                      }`}
+                    >
+                      {workspace.isActive ? "Active" : "Inactive"}
+                    </span>
                   </div>
                 </div>
-              </div>
 
-              {/* Badges */}
-              <div className="mb-3 flex flex-wrap items-center gap-1.5">
-                {workspace.isDefault && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
-                    <Star size={10} className="fill-amber-700" />
-                    Default
-                  </span>
-                )}
-                <span
-                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                    workspace.isActive
-                      ? "bg-green-100 text-green-700"
-                      : "bg-gray-100 text-gray-700"
-                  }`}
-                >
-                  {workspace.isActive ? (
-                    <CheckCircle2 size={10} />
+                <div className="flex-1 min-w-0 flex items-center">
+                  {isEditing ? (
+                    <Input
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      onBlur={() => handleNameSave(workspace)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleNameSave(workspace);
+                        if (e.key === "Escape") setEditingId(null);
+                      }}
+                      className="h-10 text-base font-semibold"
+                      autoFocus
+                    />
                   ) : (
-                    <XCircle size={10} />
+                    <div className="flex items-center gap-2 w-full">
+                      <h3 className="text-base font-bold text-gray-900 line-clamp-1 flex-1">
+                        {workspace.name}
+                      </h3>
+                      <button
+                        onClick={() =>
+                          handleNameEdit(workspace.id, workspace.name || "")
+                        }
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 hover:bg-gray-100 rounded"
+                        title="Edit name"
+                      >
+                        <Pencil size={14} className="text-gray-600" />
+                      </button>
+                    </div>
                   )}
-                  {workspace.isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-
-              {/* Info */}
-              <div className="mb-3 text-xs text-gray-500">
-                <div className="flex items-center gap-1">
-                  <Calendar size={12} />
-                  <span>
-                    Created {new Date(workspace.createdAt).toLocaleDateString()}
-                  </span>
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="flex gap-1.5">
+              <div className="flex gap-2">
+                {/* Select Button */}
                 <Button
                   variant={isSelected ? "default" : "outline"}
                   size="sm"
-                  className="flex-1 text-xs h-7"
+                  className={`flex-1 text-xs h-8 transition-all duration-200 ${
+                    isSelected
+                      ? "bg-blue-600 hover:bg-blue-700 shadow-md"
+                      : "hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 cursor-pointer hover:scale-105"
+                  }`}
                   onClick={() => {
                     setCurrentWorkspace(workspace);
-                    // Invalidate credential-related queries when workspace changes
                     queryClient.invalidateQueries({
                       queryKey: ["credential-groups"],
                     });
@@ -170,20 +216,22 @@ export function WorkspaceList() {
                 >
                   {isSelected ? (
                     <>
-                      <Check size={12} className="mr-1" />
+                      <Check size={14} className="mr-1" />
                       Selected
                     </>
                   ) : (
                     "Select"
                   )}
                 </Button>
+
+                {/* Favorite Button */}
                 <Button
-                  variant={workspace.isDefault ? "default" : "ghost"}
+                  variant="ghost"
                   size="sm"
-                  className={`h-7 w-7 p-0 ${
+                  className={`h-8 w-8 p-0 transition-all duration-200 ${
                     workspace.isDefault
-                      ? "text-amber-600 hover:bg-amber-100"
-                      : "text-gray-400 hover:bg-amber-50 hover:text-amber-600"
+                      ? "bg-amber-100 text-amber-600 hover:bg-amber-200 shadow-md"
+                      : "text-gray-400 hover:bg-amber-50 hover:text-amber-600 hover:scale-110"
                   }`}
                   onClick={() => setDefaultWorkspace(workspace.id)}
                   disabled={isSettingDefault || workspace.isDefault}
@@ -192,18 +240,19 @@ export function WorkspaceList() {
                   }
                 >
                   {workspace.isDefault ? (
-                    <Star size={14} className="fill-amber-600" />
+                    <Star size={16} className="fill-amber-600" />
                   ) : (
-                    <StarOff size={14} />
+                    <StarOff size={16} />
                   )}
                 </Button>
-                <EditWorkspaceForm workspace={workspace} />
+
+                {/* Delete Button */}
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 w-7 p-0 text-red-600 hover:bg-red-100 hover:text-red-700"
+                      className="h-8 w-8 p-0 text-red-600 hover:bg-red-100 hover:text-red-700 transition-all duration-200 hover:scale-110"
                       disabled={isDeleting}
                       title="Delete workspace"
                     >

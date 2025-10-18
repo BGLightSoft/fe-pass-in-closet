@@ -226,7 +226,7 @@ export function CredentialGroupTree({
 }: CredentialGroupTreeProps) {
   if (!groups || groups.length === 0) {
     return (
-      <Card className="border-dashed">
+      <Card className="border-dashed border-gray-300">
         <CardContent className="flex flex-col items-center justify-center p-8">
           <div className="rounded-full bg-gray-100 p-3">
             <Folder size={32} className="text-gray-400" />
@@ -243,8 +243,8 @@ export function CredentialGroupTree({
   }
 
   return (
-    <Card>
-      <CardHeader className="border-b bg-gradient-to-r from-blue-50 to-purple-50">
+    <Card className="border-gray-300">
+      <CardHeader className="border-b border-gray-300 bg-gradient-to-r from-blue-50 to-purple-50">
         <CardTitle className="flex items-center gap-2">
           <FolderOpen className="text-blue-600" size={18} />
           Your Credential Groups
