@@ -1,4 +1,5 @@
-import { Button } from "@/shared/ui/button";
+import { useCredentialGroupTypes } from '@/features/credential-group-type/hooks/use-credential-group-types'
+import { Button } from '@/shared/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -7,40 +8,38 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/shared/ui/dialog";
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FolderPlus, Plus, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { useCreateCredentialGroup } from "../hooks/use-create-credential-group";
+} from '@/shared/ui/dialog'
+import { Input } from '@/shared/ui/input'
+import { Label } from '@/shared/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FolderPlus, Loader2, Plus } from 'lucide-react'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { useCreateCredentialGroup } from '../hooks/use-create-credential-group'
 import {
   type CreateCredentialGroupRequest,
   createCredentialGroupRequestSchema,
-} from "../schemas/credential-group-schemas";
-import { useCredentialGroupTypes } from "@/features/credential-group-type/hooks/use-credential-group-types";
+} from '../schemas/credential-group-schemas'
 
 interface CreateCredentialGroupFormProps {
-  parentId?: string | undefined;
-  parentName?: string | undefined;
+  parentId?: string | undefined
+  parentName?: string | undefined
+  parentTypeName?: string | undefined
 }
 
 export function CreateCredentialGroupForm({
   parentId,
   parentName,
+  parentTypeName,
 }: CreateCredentialGroupFormProps) {
-  const [open, setOpen] = useState(false);
-  const { mutate: createGroup, isPending } = useCreateCredentialGroup();
-  const { data: groupTypes, isLoading: isLoadingTypes } =
-    useCredentialGroupTypes();
+  const [open, setOpen] = useState(false)
+  const { mutate: createGroup, isPending } = useCreateCredentialGroup()
+  const { data: groupTypes, isLoading: isLoadingTypes } = useCredentialGroupTypes()
+
+  // If parent exists, use parent's type automatically
+  const isSubGroup = !!parentId
+  const defaultTypeName = isSubGroup ? parentTypeName || '' : ''
 
   const {
     register,
@@ -51,20 +50,20 @@ export function CreateCredentialGroupForm({
   } = useForm<CreateCredentialGroupRequest>({
     resolver: zodResolver(createCredentialGroupRequestSchema),
     defaultValues: {
-      name: "",
-      credentialGroupTypeName: "",
+      name: '',
+      credentialGroupTypeName: defaultTypeName,
       credentialGroupId: parentId,
     },
-  });
+  })
 
   const onSubmit = (data: CreateCredentialGroupRequest) => {
     createGroup(data, {
       onSuccess: () => {
-        reset();
-        setOpen(false);
+        reset()
+        setOpen(false)
       },
-    });
-  };
+    })
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,18 +83,19 @@ export function CreateCredentialGroupForm({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <FolderPlus className="text-blue-600" size={24} />
-            {parentId ? "Create Sub-Group" : "Create Credential Group"}
+            {isSubGroup ? 'Create Sub-Group' : 'Create Credential Group'}
           </DialogTitle>
           <DialogDescription className="text-base">
-            {parentId ? (
+            {isSubGroup ? (
               <>
-                Create a new group under{" "}
-                <span className="font-semibold text-gray-900">
-                  {parentName}
-                </span>
+                Create a new sub-group under{' '}
+                <span className="font-semibold text-gray-900">{parentName}</span>
+                {parentTypeName && (
+                  <span className="ml-1 text-blue-600">({parentTypeName} type)</span>
+                )}
               </>
             ) : (
-              "Organize your credentials by creating a new group"
+              'Organize your credentials by creating a new group'
             )}
           </DialogDescription>
         </DialogHeader>
@@ -109,7 +109,7 @@ export function CreateCredentialGroupForm({
               placeholder="e.g., Production Servers, Email Accounts"
               className="h-11 text-base"
               autoFocus
-              {...register("name")}
+              {...register('name')}
             />
             {errors.name && (
               <p className="flex items-center gap-1 text-sm text-red-600">
@@ -118,59 +118,70 @@ export function CreateCredentialGroupForm({
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="type" className="text-base">
-              Group Type <span className="text-red-500">*</span>
-            </Label>
-            <Controller
-              name="credentialGroupTypeName"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-11 text-base">
-                    <SelectValue placeholder="Select a group type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {isLoadingTypes ? (
-                      <div className="flex items-center justify-center p-4">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="ml-2 text-sm">Loading types...</span>
-                      </div>
-                    ) : groupTypes && groupTypes.length > 0 ? (
-                      groupTypes
-                        .filter((type) => type.isActive)
-                        .map((type) => (
-                          <SelectItem key={type.id} value={type.name || ""}>
-                            {type.name}
-                          </SelectItem>
-                        ))
-                    ) : (
-                      <div className="p-4 text-center text-sm text-gray-500">
-                        No types available
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
+          {/* Only show type selector for root groups, sub-groups inherit parent type */}
+          {!isSubGroup && (
+            <div className="space-y-2">
+              <Label htmlFor="type" className="text-base">
+                Group Type <span className="text-red-500">*</span>
+              </Label>
+              <Controller
+                name="credentialGroupTypeName"
+                control={control}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className="h-11 text-base">
+                      <SelectValue placeholder="Select a group type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isLoadingTypes ? (
+                        <div className="flex items-center justify-center p-4">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="ml-2 text-sm">Loading types...</span>
+                        </div>
+                      ) : groupTypes && groupTypes.length > 0 ? (
+                        groupTypes
+                          .filter((type) => type.isActive)
+                          .map((type) => (
+                            <SelectItem key={type.id} value={type.name || ''}>
+                              {type.name}
+                            </SelectItem>
+                          ))
+                      ) : (
+                        <div className="p-4 text-center text-sm text-gray-500">
+                          No types available
+                        </div>
+                      )}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.credentialGroupTypeName && (
+                <p className="flex items-center gap-1 text-sm text-red-600">
+                  <span>⚠️</span> {errors.credentialGroupTypeName.message}
+                </p>
               )}
-            />
-            {errors.credentialGroupTypeName && (
-              <p className="flex items-center gap-1 text-sm text-red-600">
-                <span>⚠️</span> {errors.credentialGroupTypeName.message}
+              <p className="text-xs text-gray-500">
+                The type determines what fields are available for credentials in this group
               </p>
-            )}
-            <p className="text-xs text-gray-500">
-              The type determines what fields are available for credentials in
-              this group
-            </p>
-          </div>
+            </div>
+          )}
+
+          {/* Hidden field for sub-groups to inherit parent type */}
+          {isSubGroup && (
+            <input
+              type="hidden"
+              {...register('credentialGroupTypeName')}
+              value={parentTypeName || ''}
+            />
+          )}
 
           <DialogFooter className="gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => {
-                setOpen(false);
-                reset();
+                setOpen(false)
+                reset()
               }}
               disabled={isPending}
             >
@@ -193,5 +204,5 @@ export function CreateCredentialGroupForm({
         </form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
