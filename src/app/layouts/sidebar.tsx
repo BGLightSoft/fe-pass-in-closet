@@ -11,8 +11,12 @@ const navigation = [
 export function Sidebar() {
   return (
     <aside className="w-64 border-r bg-white">
-      <div className="flex h-16 items-center border-b px-6">
-        <h1 className="text-xl font-bold">PIC</h1>
+      <div className="flex h-16 items-center justify-center border-b px-6">
+        <img
+          src="/pass-in-closet.png"
+          alt="Pass-in-Closet"
+          className="h-14 w-auto"
+        />
       </div>
       <nav className="space-y-1 p-4">
         {navigation.map((item) => (
@@ -21,10 +25,10 @@ export function Sidebar() {
             to={item.href}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium transition-colors border",
                 isActive
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-blue-50 text-blue-700 border-blue-300"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-gray-300 hover:border-blue-200"
               )
             }
           >
