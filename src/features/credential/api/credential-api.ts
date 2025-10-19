@@ -35,9 +35,7 @@ export const credentialApi = {
   },
 
   create: async (data: CreateCredentialRequest): Promise<Credential> => {
-    console.log("🌐 API Request - POST /credential:", data);
     const response = await apiClient.post("/credential", data);
-    console.log("🌐 API Response:", response.data);
     const wrappedSchema = createResponseSchema(credentialSchema);
     return wrappedSchema.parse(response.data);
   },

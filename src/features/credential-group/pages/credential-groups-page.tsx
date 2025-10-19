@@ -97,16 +97,10 @@ export default function CredentialGroupsPage() {
   };
 
   const handleGroupSelect = (groupId: string, groupName: string) => {
-    console.log("🔍 Selecting group:", { groupId, groupName });
     setSelectedGroupId(groupId);
     setSelectedGroupName(groupName);
 
     const selectedGroup = findGroupById(groups || [], groupId);
-    console.log("🔍 Selected group:", selectedGroup);
-    console.log(
-      "🔍 CredentialGroupTypeId:",
-      selectedGroup?.credentialGroupTypeId
-    );
     setSelectedGroupTypeId(selectedGroup?.credentialGroupTypeId || null);
 
     // Build and set the path

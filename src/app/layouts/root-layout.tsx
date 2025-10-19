@@ -1,23 +1,10 @@
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
 import { useWorkspaces } from "@/features/workspace/hooks/use-workspaces";
 
 export function RootLayout() {
   const { data: workspaces, isLoading } = useWorkspaces();
-
-  useEffect(() => {
-    console.log("🔍 Workspace Debug:", {
-      workspaces,
-      count: workspaces?.length || 0,
-      isLoading,
-      localStorage: {
-        workspace_id: localStorage.getItem("workspace_id"),
-        workspace_storage: localStorage.getItem("workspace-storage"),
-      },
-    });
-  }, [workspaces, isLoading]);
 
   if (isLoading) {
     return (

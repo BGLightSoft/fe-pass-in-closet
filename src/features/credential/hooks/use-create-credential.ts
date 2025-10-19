@@ -8,11 +8,9 @@ export function useCreateCredential() {
 
   return useMutation({
     mutationFn: (data) => {
-      console.log("🚀 API Call - Creating credential:", data);
       return credentialApi.create(data);
     },
-    onSuccess: (data) => {
-      console.log("✅ API Success - Credential created:", data);
+    onSuccess: () => {
       // Invalidate credentials list
       queryClient.invalidateQueries({ queryKey: ["credentials"] });
       queryClient.invalidateQueries({ queryKey: ["all-credentials"] });
@@ -25,7 +23,6 @@ export function useCreateCredential() {
       });
     },
     onError: (error: Error) => {
-      console.error("❌ API Error - Credential creation failed:", error);
       toast({
         title: "❌ Error",
         description: error.message || "Failed to create credential.",

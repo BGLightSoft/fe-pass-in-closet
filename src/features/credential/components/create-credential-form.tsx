@@ -42,14 +42,6 @@ export function CreateCredentialForm({
   const { data: parameterList, isLoading: isLoadingParameters } =
     useCredentialParameterList(credentialGroupTypeId);
 
-  console.log("🔍 CreateCredentialForm props:", {
-    credentialGroupId,
-    credentialGroupTypeId,
-    credentialGroupName,
-  });
-  console.log("🔍 Parameter list:", parameterList);
-  console.log("🔍 Is loading parameters:", isLoadingParameters);
-
   // Dynamic form schema based on parameter list (excluding 'index')
   const formSchema = z.object({
     name: z.string().min(1, "Credential name is required").max(255),

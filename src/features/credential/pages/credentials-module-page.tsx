@@ -141,10 +141,7 @@ export function CredentialsModulePage() {
         const groupCredentials = await credentialApi.getByGroup(group.id);
         allCredentials.push(...groupCredentials);
       } catch (error) {
-        console.error(
-          `Error fetching credentials for group ${group.id}:`,
-          error
-        );
+        // Silently handle error - group may be empty or inaccessible
       }
     }
 
