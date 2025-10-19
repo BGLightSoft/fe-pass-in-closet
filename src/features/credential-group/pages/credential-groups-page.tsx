@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreateCredentialGroupForm } from "../components/create-credential-group-form";
 import { CredentialGroupTree } from "../components/credential-group-tree";
 import { useCredentialGroups } from "../hooks/use-credential-groups";
@@ -19,6 +19,8 @@ import {
   Lock,
   Plus,
   Search,
+  ArrowLeft,
+  Home,
 } from "lucide-react";
 import { useWorkspaceStore } from "@/features/workspace/store/workspace-store";
 import { Input } from "@/shared/ui/input";
@@ -28,7 +30,6 @@ import {
 } from "@/shared/lib/credential-group-type-icons";
 
 export default function CredentialGroupsPage() {
-  const { currentWorkspace } = useWorkspaceStore();
   const { data: groups, isLoading: isLoadingGroups } = useCredentialGroups();
   const { mutate: deleteGroup } = useDeleteCredentialGroup();
 
@@ -40,6 +41,21 @@ export default function CredentialGroupsPage() {
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [groupPath, setGroupPath] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [isCreateCredentialOpen, setIsCreateCredentialOpen] = useState(false);
+
+  // Calculate which groups should be auto-expanded (all groups in the path to selected)
+  const calculateExpandedGroupIds = (): Set<string> => {
+    if (!selectedGroupId || groupPath.length === 0) {
+      return new Set();
+    }
+    // Expand all groups in the path except the last one (which is the selected group itself)
+    return new Set(groupPath.slice(0, -1).map((item) => item.id));
+  };
+
+  const expandedGroupIds = calculateExpandedGroupIds();
 
   const {
     data: credentials,
@@ -49,21 +65,41 @@ export default function CredentialGroupsPage() {
 
   const { mutate: deleteCredential } = useDeleteCredential();
 
+  // Helper: Find group by ID
+  const findGroupById = (groups: any[], id: string): any => {
+    for (const group of groups) {
+      if (group.id === id) return group;
+      if (group.children) {
+        const found = findGroupById(group.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  // Helper: Build path to a group
+  const buildGroupPath = (
+    groups: any[],
+    targetId: string,
+    currentPath: Array<{ id: string; name: string }> = []
+  ): Array<{ id: string; name: string }> | null => {
+    for (const group of groups) {
+      const newPath = [...currentPath, { id: group.id, name: group.name }];
+      if (group.id === targetId) {
+        return newPath;
+      }
+      if (group.children) {
+        const found = buildGroupPath(group.children, targetId, newPath);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
   const handleGroupSelect = (groupId: string, groupName: string) => {
     console.log("🔍 Selecting group:", { groupId, groupName });
     setSelectedGroupId(groupId);
     setSelectedGroupName(groupName);
-
-    const findGroupById = (groups: any[], id: string): any => {
-      for (const group of groups) {
-        if (group.id === id) return group;
-        if (group.children) {
-          const found = findGroupById(group.children, id);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
 
     const selectedGroup = findGroupById(groups || [], groupId);
     console.log("🔍 Selected group:", selectedGroup);
@@ -72,7 +108,54 @@ export default function CredentialGroupsPage() {
       selectedGroup?.credentialGroupTypeId
     );
     setSelectedGroupTypeId(selectedGroup?.credentialGroupTypeId || null);
+
+    // Build and set the path
+    const path = buildGroupPath(groups || [], groupId);
+    setGroupPath(path || []);
   };
+
+  // Navigation: Go to parent group
+  const handleGoToParent = () => {
+    if (groupPath.length > 1) {
+      const parentGroup = groupPath[groupPath.length - 2];
+      if (parentGroup) {
+        handleGroupSelect(parentGroup.id, parentGroup.name);
+      }
+    }
+  };
+
+  // Navigation: Go to root (clear selection)
+  const handleGoToRoot = () => {
+    setSelectedGroupId(null);
+    setSelectedGroupName(null);
+    setSelectedGroupTypeId(null);
+    setGroupPath([]);
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // ESC: Go back or to root
+      if (e.key === "Escape") {
+        if (groupPath.length > 0) {
+          e.preventDefault();
+          if (groupPath.length === 1) {
+            handleGoToRoot();
+          } else {
+            handleGoToParent();
+          }
+        }
+      }
+      // Alt+Home: Go to root
+      if (e.altKey && e.key === "Home") {
+        e.preventDefault();
+        handleGoToRoot();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [groupPath]);
 
   const handleGroupDelete = (groupId: string) => {
     const isSelectedGroupOrChild = (
@@ -114,9 +197,7 @@ export default function CredentialGroupsPage() {
       selectedGroupId &&
       isSelectedGroupOrChild(groups || [], groupId, selectedGroupId)
     ) {
-      setSelectedGroupId(null);
-      setSelectedGroupName(null);
-      setSelectedGroupTypeId(null);
+      handleGoToRoot();
     }
 
     deleteGroup(groupId);
@@ -172,21 +253,48 @@ export default function CredentialGroupsPage() {
       </div>
 
       {/* Info Banner */}
-      <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-purple-50">
-        <CardContent className="flex items-start gap-3 p-3">
-          <Info className="mt-0.5 flex-shrink-0 text-blue-600" size={16} />
-          <div className="text-xs">
-            <p className="font-medium text-blue-900">
-              How Credential Groups Work
-            </p>
-            <p className="mt-1 text-blue-700">
-              Create root groups with specific types (Email, Server, Database),
-              then add sub-groups and credentials. Each credential inherits its
-              group's type and structure.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardContent className="flex items-start gap-3 p-3">
+            <Info className="mt-0.5 flex-shrink-0 text-blue-600" size={16} />
+            <div className="text-xs">
+              <p className="font-medium text-blue-900">
+                How Credential Groups Work
+              </p>
+              <p className="mt-1 text-blue-700">
+                Create root groups with specific types (Email, Server,
+                Database), then add sub-groups and credentials. Each credential
+                inherits its group's type and structure.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50">
+          <CardContent className="flex items-start gap-3 p-3">
+            <Sparkles
+              className="mt-0.5 flex-shrink-0 text-purple-600"
+              size={16}
+            />
+            <div className="text-xs">
+              <p className="font-medium text-purple-900">
+                ⌨️ Keyboard Shortcuts
+              </p>
+              <div className="mt-1 flex flex-wrap gap-2 text-purple-700">
+                <span className="rounded bg-white/50 px-1.5 py-0.5 font-mono">
+                  ESC
+                </span>
+                <span>Go back</span>
+                <span className="text-purple-400">•</span>
+                <span className="rounded bg-white/50 px-1.5 py-0.5 font-mono">
+                  Alt+Home
+                </span>
+                <span>Go to root</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Main Content */}
       <div className="grid gap-4 lg:grid-cols-10">
@@ -258,6 +366,7 @@ export default function CredentialGroupsPage() {
                     onDelete={handleGroupDelete}
                     onSelect={handleGroupSelect}
                     selectedGroupId={selectedGroupId}
+                    expandedGroupIds={expandedGroupIds}
                   />
                 )}
               </div>
@@ -270,6 +379,76 @@ export default function CredentialGroupsPage() {
           {selectedGroupId ? (
             <Card className="shadow-md border-gray-300">
               <CardContent className="p-0">
+                {/* Navigation Bar */}
+                {groupPath.length > 0 && (
+                  <div className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 px-4 py-2">
+                    <div className="flex items-center justify-between gap-3">
+                      {/* Breadcrumb */}
+                      <div className="flex flex-1 items-center gap-1.5 overflow-x-auto text-xs">
+                        <button
+                          type="button"
+                          onClick={handleGoToRoot}
+                          className="flex items-center gap-1 rounded-md px-2 py-1 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
+                          title="Go to root (Alt+Home)"
+                        >
+                          <Home size={14} />
+                          <span className="font-medium">Root</span>
+                        </button>
+                        {groupPath.map((pathItem, index) => (
+                          <div
+                            key={pathItem.id}
+                            className="flex items-center gap-1.5"
+                          >
+                            <ChevronRight size={12} className="text-gray-400" />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleGroupSelect(pathItem.id, pathItem.name)
+                              }
+                              className={`max-w-[150px] truncate rounded-md px-2 py-1 transition-colors ${
+                                index === groupPath.length - 1
+                                  ? "bg-blue-100 font-semibold text-blue-700"
+                                  : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
+                              }`}
+                              title={pathItem.name}
+                            >
+                              {pathItem.name}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Navigation Buttons */}
+                      <div className="flex items-center gap-1.5">
+                        {groupPath.length > 1 && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleGoToParent}
+                            className="h-7 gap-1.5 text-xs"
+                            title="Go to parent group (ESC)"
+                          >
+                            <ArrowLeft size={14} />
+                            <span>Back</span>
+                          </Button>
+                        )}
+                        {groupPath.length > 0 && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleGoToRoot}
+                            className="h-7 gap-1.5 text-xs"
+                            title="Go to root (Alt+Home)"
+                          >
+                            <Home size={14} />
+                            <span>Home</span>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Credentials Header */}
                 <div className="border-b border-gray-300 bg-gradient-to-r from-blue-50 to-purple-50 p-4">
                   <div className="mb-3 flex items-start justify-between">
@@ -277,7 +456,6 @@ export default function CredentialGroupsPage() {
                       <div className="flex items-center gap-2 text-xs text-gray-600">
                         <FolderTree size={12} />
                         <span>Selected Group</span>
-                        <ChevronRight size={12} />
                       </div>
                       <div className="mt-1 flex items-center gap-2">
                         {selectedGroupTypeId &&
@@ -303,11 +481,23 @@ export default function CredentialGroupsPage() {
                       )}
                     </div>
                     {selectedGroupTypeId && (
-                      <CreateCredentialForm
-                        credentialGroupId={selectedGroupId}
-                        credentialGroupTypeId={selectedGroupTypeId}
-                        credentialGroupName={selectedGroupName || undefined}
-                      />
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() => setIsCreateCredentialOpen(true)}
+                          className="gap-1.5"
+                        >
+                          <Plus size={16} />
+                          Add Credential
+                        </Button>
+                        <CreateCredentialForm
+                          credentialGroupId={selectedGroupId}
+                          credentialGroupTypeId={selectedGroupTypeId}
+                          credentialGroupName={selectedGroupName || undefined}
+                          open={isCreateCredentialOpen}
+                          onOpenChange={setIsCreateCredentialOpen}
+                        />
+                      </>
                     )}
                   </div>
 
@@ -365,10 +555,10 @@ export default function CredentialGroupsPage() {
                   </div>
                 </div>
                 <h3 className="mb-2 text-lg font-bold text-gray-900">
-                  Select a Group
+                  👈 Select a Group
                 </h3>
                 <p className="mb-4 text-center text-sm text-gray-600">
-                  Choose a credential group from the left panel to view and
+                  Click on any credential group from the left panel to view and
                   manage its credentials
                 </p>
                 <div className="flex flex-col items-center gap-2 text-xs text-gray-500">
@@ -382,13 +572,19 @@ export default function CredentialGroupsPage() {
                     <div className="rounded-full bg-blue-100 p-1">
                       <Layers size={10} className="text-blue-600" />
                     </div>
-                    <span>Nest groups for better organization</span>
+                    <span>Nest groups for hierarchical organization</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="rounded-full bg-green-100 p-1">
                       <Lock size={10} className="text-green-600" />
                     </div>
-                    <span>All credentials are encrypted</span>
+                    <span>All credentials are encrypted securely</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-full bg-purple-100 p-1">
+                      <Sparkles size={10} className="text-purple-600" />
+                    </div>
+                    <span>Use ESC to navigate back easily</span>
                   </div>
                 </div>
               </CardContent>

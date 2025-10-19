@@ -19,7 +19,7 @@ import {
   FolderOpen,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { CredentialGroup } from "../schemas/credential-group-schemas";
 import { CreateCredentialGroupForm } from "./create-credential-group-form";
 import { EditCredentialGroupForm } from "./edit-credential-group-form";
@@ -36,6 +36,7 @@ interface CredentialGroupNodeProps {
   onSelect?: (groupId: string, groupName: string) => void;
   selectedGroupId?: string | null;
   rootTypeName?: string | null; // Type name inherited from root parent
+  expandedGroupIds?: Set<string>;
 }
 
 function CredentialGroupNode({
@@ -45,8 +46,19 @@ function CredentialGroupNode({
   onSelect,
   selectedGroupId,
   rootTypeName,
+  expandedGroupIds,
 }: CredentialGroupNodeProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+  // Auto-expand if in expanded set, otherwise use local state
+  const shouldBeExpanded = expandedGroupIds?.has(group.id) || false;
+  const [isExpanded, setIsExpanded] = useState(shouldBeExpanded);
+  
+  // Sync with expandedGroupIds changes
+  useEffect(() => {
+    if (shouldBeExpanded) {
+      setIsExpanded(true);
+    }
+  }, [shouldBeExpanded]);
+
   const hasChildren = group.children && group.children.length > 0;
   const isSelected = selectedGroupId === group.id;
 
@@ -203,6 +215,7 @@ function CredentialGroupNode({
               onSelect={onSelect}
               selectedGroupId={selectedGroupId}
               rootTypeName={currentTypeName}
+              expandedGroupIds={expandedGroupIds}
             />
           ))}
         </div>
@@ -216,6 +229,7 @@ interface CredentialGroupTreeProps {
   onDelete: (id: string) => void;
   onSelect?: (groupId: string, groupName: string) => void;
   selectedGroupId?: string | null;
+  expandedGroupIds?: Set<string>;
 }
 
 export function CredentialGroupTree({
@@ -223,6 +237,7 @@ export function CredentialGroupTree({
   onDelete,
   onSelect,
   selectedGroupId,
+  expandedGroupIds,
 }: CredentialGroupTreeProps) {
   if (!groups || groups.length === 0) {
     return (
@@ -259,6 +274,7 @@ export function CredentialGroupTree({
             onSelect={onSelect}
             selectedGroupId={selectedGroupId}
             rootTypeName={group.credentialGroupTypeName}
+            expandedGroupIds={expandedGroupIds}
           />
         ))}
       </CardContent>

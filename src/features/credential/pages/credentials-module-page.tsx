@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
@@ -27,6 +27,8 @@ import {
   ChevronDown,
   ChevronUp,
   Users,
+  ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 import { useCredentialGroups } from "@/features/credential-group/hooks/use-credential-groups";
 import { credentialApi } from "@/features/credential/api/credential-api";
@@ -239,6 +241,47 @@ export function CredentialsModulePage() {
 
   const breadcrumbPath = getBreadcrumbPath();
 
+  // Navigation Functions
+  const handleGoToParent = () => {
+    if (breadcrumbPath.length > 1) {
+      const parentGroup = breadcrumbPath[breadcrumbPath.length - 2];
+      if (parentGroup) {
+        setSelectedGroupId(parentGroup.id);
+      }
+    } else if (breadcrumbPath.length === 1) {
+      setSelectedGroupId(null);
+    }
+  };
+
+  const handleGoToRoot = () => {
+    setSelectedGroupId(null);
+  };
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // ESC: Go back or to root
+      if (e.key === "Escape") {
+        if (selectedGroupId) {
+          e.preventDefault();
+          if (breadcrumbPath.length === 1) {
+            handleGoToRoot();
+          } else {
+            handleGoToParent();
+          }
+        }
+      }
+      // Alt+Home: Go to root
+      if (e.altKey && e.key === "Home") {
+        e.preventDefault();
+        handleGoToRoot();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedGroupId, breadcrumbPath]);
+
   // CRUD Functions
   const handleCreateGroup = () => {
     setShowCreateGroup(true);
@@ -386,55 +429,54 @@ export function CredentialsModulePage() {
               </p>
             </div>
           </div>
-
-          {/* Breadcrumb Navigation */}
-          {breadcrumbPath.length > 0 && (
-            <div className="mt-4 flex items-center space-x-2 text-sm">
-              <button
-                onClick={() => setSelectedGroupId(null)}
-                className="flex items-center text-blue-100 hover:text-white transition-colors"
-              >
-                <Home className="h-4 w-4 mr-1" />
-                All Groups
-              </button>
-              {breadcrumbPath.map((group, index) => (
-                <div key={group.id} className="flex items-center space-x-2">
-                  <ChevronRight className="h-4 w-4 text-blue-200" />
-                  <button
-                    onClick={() => setSelectedGroupId(group.id)}
-                    className={`transition-colors ${
-                      index === breadcrumbPath.length - 1
-                        ? "text-white font-medium"
-                        : "text-blue-100 hover:text-white"
-                    }`}
-                  >
-                    {group.name}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Info Banner */}
-      <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-purple-50">
-        <CardContent className="flex items-start gap-3 p-3">
-          <div className="mt-0.5 flex-shrink-0 text-blue-600 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">
-            i
-          </div>
-          <div className="text-xs">
-            <p className="font-medium text-blue-900">
-              How Credential Groups Work
-            </p>
-            <p className="mt-1 text-blue-700">
-              Create root groups with specific types (Email, Server, Database),
-              then add sub-groups and credentials. Each credential inherits its
-              group's type and structure.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Info Banners */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="border-blue-300 bg-gradient-to-r from-blue-50 to-purple-50">
+          <CardContent className="flex items-start gap-3 p-3">
+            <div className="mt-0.5 flex-shrink-0 text-blue-600 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-white text-xs font-bold">
+              i
+            </div>
+            <div className="text-xs">
+              <p className="font-medium text-blue-900">
+                How Credential Groups Work
+              </p>
+              <p className="mt-1 text-blue-700">
+                Create root groups with specific types (Email, Server,
+                Database), then add sub-groups and credentials. Each credential
+                inherits its group's type and structure.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-purple-300 bg-gradient-to-r from-purple-50 to-pink-50">
+          <CardContent className="flex items-start gap-3 p-3">
+            <Sparkles
+              className="mt-0.5 flex-shrink-0 text-purple-600"
+              size={16}
+            />
+            <div className="text-xs">
+              <p className="font-medium text-purple-900">
+                ⌨️ Keyboard Shortcuts
+              </p>
+              <div className="mt-1 flex flex-wrap gap-2 text-purple-700">
+                <span className="rounded bg-white/50 px-1.5 py-0.5 font-mono">
+                  ESC
+                </span>
+                <span>Go back</span>
+                <span className="text-purple-400">•</span>
+                <span className="rounded bg-white/50 px-1.5 py-0.5 font-mono">
+                  Alt+Home
+                </span>
+                <span>Go to root</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Search Bar */}
       <div className="mb-6">
@@ -451,15 +493,75 @@ export function CredentialsModulePage() {
 
       {/* Groups Section */}
       <div className="mb-8">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Groups</h2>
-          <Button
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-            onClick={handleCreateGroup}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Group
-          </Button>
+        <div className="mb-4">
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-gray-900">Groups</h2>
+
+              {/* Navigation Buttons */}
+              {breadcrumbPath.length > 0 && (
+                <div className="flex items-center gap-1.5 ml-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleGoToParent}
+                    className="h-7 gap-1.5 text-xs"
+                    title="Go back (ESC)"
+                  >
+                    <ArrowLeft size={14} />
+                    <span className="hidden sm:inline">Back</span>
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleGoToRoot}
+                    className="h-7 gap-1.5 text-xs"
+                    title="Go to root (Alt+Home)"
+                  >
+                    <Home size={14} />
+                    <span className="hidden sm:inline">Home</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              onClick={handleCreateGroup}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Group
+            </Button>
+          </div>
+
+          {/* Breadcrumb Path */}
+          {breadcrumbPath.length > 0 && (
+            <div className="flex items-center gap-1.5 text-xs text-gray-600 pl-1">
+              <button
+                onClick={handleGoToRoot}
+                className="hover:text-blue-600 transition-colors"
+                title="Go to root (Alt+Home)"
+              >
+                All Groups
+              </button>
+              {breadcrumbPath.map((group, index) => (
+                <div key={group.id} className="flex items-center gap-1.5">
+                  <ChevronRight size={12} className="text-gray-400" />
+                  <button
+                    onClick={() => setSelectedGroupId(group.id)}
+                    className={`hover:text-blue-600 transition-colors truncate max-w-[150px] ${
+                      index === breadcrumbPath.length - 1
+                        ? "text-blue-600 font-medium"
+                        : ""
+                    }`}
+                    title={group.name}
+                  >
+                    {group.name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {groupsLoading ? (
