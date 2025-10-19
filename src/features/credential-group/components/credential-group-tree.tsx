@@ -51,7 +51,7 @@ function CredentialGroupNode({
   // Auto-expand if in expanded set, otherwise use local state
   const shouldBeExpanded = expandedGroupIds?.has(group.id) || false;
   const [isExpanded, setIsExpanded] = useState(shouldBeExpanded);
-  
+
   // Sync with expandedGroupIds changes
   useEffect(() => {
     if (shouldBeExpanded) {
